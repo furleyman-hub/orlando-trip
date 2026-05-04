@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#e63946">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Orlando Trip 2026</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root {
+      --bg: #0f1923;
+      --bg2: #1a2535;
+      --bg3: #243040;
+      --accent: #e63946;
+      --gold: #f4a300;
+      --green: #2ecc71;
+      --yellow: #f39c12;
+      --red: #e74c3c;
+      --text: #f0f0f0;
+      --text2: #b0b8c8;
+      --border: #2d3f55;
+      --nav-h: 64px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 100dvh;
+    }
+
+    /* ── HEADER ── */
+    #app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 52px;
+    }
+    #app-header h1 {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    #app-header h1 span { color: var(--accent); }
+    .header-badge {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 12px;
+      color: var(--text2);
+    }
+
+    /* ── MAIN CONTENT ── */
+    #view-root {
+      padding: 12px 14px calc(var(--nav-h) + var(--safe-bottom) + 12px);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ── BOTTOM NAV ── */
+    #bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding-bottom: var(--safe-bottom);
+      height: calc(var(--nav-h) + var(--safe-bottom));
+    }
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 6px 0;
+      cursor: pointer;
+      transition: color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 48px;
+    }
+    .nav-btn svg { width: 22px; height: 22px; }
+    .nav-btn.active { color: var(--accent); }
+    .nav-btn.active svg path, .nav-btn.active svg rect, .nav-btn.active svg circle,
+    .nav-btn.active svg polyline, .nav-btn.active svg polygon { stroke: var(--accent); }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text2);
+      margin-bottom: 8px;
+    }
+
+    /* ── SUB NAV ── */
+    .sub-nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 10px 0 6px;
+      margin-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .sub-nav::-webkit-scrollbar { display: none; }
+    .sub-btn {
+      flex-shrink: 0;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: all 0.15s;
+    }
+    .sub-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ── SECTION VISIBILITY ── */
+    .tab-view { display: none; }
+    .tab-view.active { display: block; }
+    .sub-view { display: none; }
+    .sub-view.active { display: block; }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-ok { background: rgba(46,204,113,0.2); color: var(--green); border: 1px solid var(--green); }
+    .badge-warn { background: rgba(243,156,18,0.2); color: var(--yellow); border: 1px solid var(--yellow); }
+    .badge-danger { background: rgba(231,76,60,0.2); color: var(--red); border: 1px solid var(--red); }
+    .badge-perk { background: rgba(244,163,0,0.2); color: var(--gold); border: 1px solid var(--gold); }
+    .badge-conf { background: rgba(46,204,113,0.15); color: var(--green); border: 1px solid rgba(46,204,113,0.4); }
+    .badge-gray { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+
+    /* ── TABLES ── */
+    .table-wrap { overflow-x: auto; margin: 8px 0; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 280px; }
+    th {
+      background: var(--bg3);
+      color: var(--text2);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 8px 10px;
+      text-align: left;
+    }
+    td { padding: 9px 10px; border-top: 1px solid var(--border); vertical-align: top; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* ── DETAIL ELEMENTS ── */
+    details { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+    details[open] { background: var(--bg2); }
+    summary {
+      list-style: none;
+      padding: 13px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-weight: 600;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: "›";
+      font-size: 18px;
+      color: var(--text2);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    details[open] summary::after { transform: rotate(90deg); }
+    .details-body { padding: 0 14px 14px; }
+
+    /* ── SCHEDULE LIST ── */
+    .schedule-list { list-style: none; }
+    .schedule-list li {
+      display: flex;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .schedule-list li:last-child { border-bottom: none; }
+    .schedule-time {
+      flex-shrink: 0;
+      width: 72px;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 600;
+      padding-top: 1px;
+    }
+
+    /* ── MUST-DOS ── */
+    .must-do-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .must-do-chip {
+      background: rgba(230,57,70,0.2);
+      border: 1px solid rgba(230,57,70,0.5);
+      color: #f08090;
+      border-radius: 16px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .nice-chip {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      border-radius: 16px;
+      padding: 3px 10px;
+      font-size: 12px;
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 8px 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .callout-warn { background: rgba(243,156,18,0.12); border-left: 3px solid var(--yellow); }
+    .callout-danger { background: rgba(231,76,60,0.12); border-left: 3px solid var(--red); }
+    .callout-info { background: rgba(52,152,219,0.12); border-left: 3px solid #3498db; }
+    .callout-success { background: rgba(46,204,113,0.12); border-left: 3px solid var(--green); }
+
+    /* ── CONF NUMBER ── */
+    .conf-number {
+      font-family: 'Courier New', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .conf-copy-btn {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      color: var(--text2);
+      cursor: pointer;
+      font-family: system-ui, sans-serif;
+    }
+
+    /* ── HOME TAB ── */
+    .trip-hero {
+      background: linear-gradient(135deg, #1a2535 0%, #0f1923 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .trip-hero h2 { font-size: 20px; margin-bottom: 4px; }
+    .trip-hero .trip-dates { color: var(--text2); font-size: 13px; margin-bottom: 12px; }
+    .countdown-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 24px;
+      padding: 6px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .quick-link-btn {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 6px;
+      text-align: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .quick-link-btn .ql-icon { font-size: 22px; }
+    .quick-link-btn:active { background: var(--bg3); }
+
+    /* ── CHECKLIST ── */
+    .checklist { list-style: none; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li.done .check-label { text-decoration: line-through; color: var(--text2); opacity: 0.6; }
+    .check-input {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--accent);
+      margin-top: 2px;
+    }
+    .check-label { font-size: 14px; line-height: 1.4; cursor: pointer; }
+
+    /* ── FAMILY ── */
+    .family-table td:first-child { font-weight: 600; white-space: nowrap; }
+    .chill-rule {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .chill-rule:last-child { border-bottom: none; }
+    .rule-num {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .rule-title { font-weight: 700; margin-bottom: 2px; }
+
+    /* ── PERKS TABLE ── */
+    .perk-yes { color: var(--green); font-weight: 600; }
+    .perk-no { color: var(--text2); }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: calc(var(--nav-h) + var(--safe-bottom) + 12px);
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #333;
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      opacity: 0;
+      transition: all 0.25s;
+      pointer-events: none;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── MISC ── */
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 4px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    ul.tip-list { list-style: none; }
+    ul.tip-list li {
+      padding: 7px 0 7px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      position: relative;
+      line-height: 1.4;
+    }
+    ul.tip-list li:last-child { border-bottom: none; }
+    ul.tip-list li::before { content: "•"; position: absolute; left: 0; color: var(--accent); }
+    .label-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .day-park { font-size: 12px; color: var(--text2); }
+    .row-flex { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<header id="app-header">
+  <h1>🎢 <span>Orlando</span> Trip 2026</h1>
+  <div class="header-badge" id="header-badge">May 21–25</div>
+</header>
+
+<main id="view-root">
+
+  <!-- ═══════ HOME TAB ═══════ -->
+  <div class="tab-view active" id="tab-home">
+    <div class="trip-hero">
+      <h2>Fox Family · Universal Orlando</h2>
+      <div class="trip-dates">May 21–25, 2026 · Memorial Day Weekend</div>
+      <div class="countdown-badge" id="countdown-text">Loading…</div>
+    </div>
+
+    <div class="card-title" style="margin-bottom:6px;">Quick Access</div>
+    <div class="quick-links" id="quick-links"></div>
+
+    <div id="today-card"></div>
+
+    <div class="card">
+      <div class="card-title">The Family</div>
+      <div style="font-size:14px;">
+        <div style="padding:4px 0;">👨 <strong>Julian</strong> — Dad / Trip Planner</div>
+        <div style="padding:4px 0;">👩 <strong>Jennifer</strong> — App monitor, co-pilot</div>
+        <div style="padding:4px 0;">🧑 <strong>Jasper</strong> — Age 13, 4'9" — clears all rides</div>
+        <div style="padding:4px 0;">👦 <strong>Sterling</strong> — Age 10, 4'6" — check heights on IOA day</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ DAYS TAB ═══════ -->
+  <div class="tab-view" id="tab-days">
+    <div id="days-container"></div>
+  </div>
+
+  <!-- ═══════ INFO TAB ═══════ -->
+  <div class="tab-view" id="tab-info">
+    <nav class="sub-nav" id="info-subnav"></nav>
+    <div class="sub-view active" id="info-family"></div>
+    <div class="sub-view" id="info-perks"></div>
+    <div class="sub-view" id="info-heights"></div>
+    <div class="sub-view" id="info-weather"></div>
+  </div>
+
+  <!-- ═══════ BOOKINGS TAB ═══════ -->
+  <div class="tab-view" id="tab-bookings">
+    <nav class="sub-nav" id="bookings-subnav"></nav>
+    <div class="sub-view active" id="book-flights"></div>
+    <div class="sub-view" id="book-hotels"></div>
+    <div class="sub-view" id="book-tickets"></div>
+    <div class="sub-view" id="book-dining"></div>
+    <div class="sub-view" id="book-costs"></div>
+  </div>
+
+  <!-- ═══════ TIPS TAB ═══════ -->
+  <div class="tab-view" id="tab-tips">
+    <nav class="sub-nav" id="tips-subnav"></nav>
+    <div class="sub-view active" id="tips-tips"></div>
+    <div class="sub-view" id="tips-actions"></div>
+  </div>
+
+</main>
+
+<!-- Bottom Navigation -->
+<nav id="bottom-nav">
+  <button class="nav-btn active" data-tab="home" onclick="showTab('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+    Home
+  </button>
+  <button class="nav-btn" data-tab="days" onclick="showTab('days')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+    Days
+  </button>
+  <button class="nav-btn" data-tab="info" onclick="showTab('info')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    Info
+  </button>
+  <button class="nav-btn" data-tab="bookings" onclick="showTab('bookings')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/>
+      <path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+    </svg>
+    Bookings
+  </button>
+  <button class="nav-btn" data-tab="tips" onclick="showTab('tips')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+    Tips
+  </button>
+</nav>
+
+<div id="toast"></div>
+
+<script src="data/content.js"></script>
+<script>
+// ── STATE ──────────────────────────────────────────────────
+let currentTab = localStorage.getItem('ot-tab') || 'home';
+const subState = {
+  info: localStorage.getItem('ot-sub-info') || 'family',
+  bookings: localStorage.getItem('ot-sub-bookings') || 'flights',
+  tips: localStorage.getItem('ot-sub-tips') || 'tips'
+};
+
+// ── UTILS ──────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('Copied: ' + text));
+}
+
+function getDaysUntilTrip() {
+  const now = new Date();
+  const start = new Date(TRIP_DATA.meta.startDate);
+  const end = new Date(TRIP_DATA.meta.endDate);
+  now.setHours(0,0,0,0); start.setHours(0,0,0,0); end.setHours(0,0,0,0);
+  const diff = Math.round((start - now) / 86400000);
+  if (diff > 0) return { text: diff + ' day' + (diff === 1 ? '' : 's') + ' to go!', type: 'before' };
+  if (diff === 0) return { text: 'Trip starts TODAY! 🎉', type: 'today' };
+  const tripDay = Math.round((now - start) / 86400000) + 1;
+  if (now <= end) return { text: 'Day ' + tripDay + ' of 5 — You\'re there! 🎢', type: 'during' };
+  return { text: 'Trip complete — great memories! ⭐', type: 'after' };
+}
+
+function getCurrentDay() {
+  const now = new Date(); now.setHours(0,0,0,0);
+  return TRIP_DATA.itinerary.days.find(d => {
+    const dd = new Date(d.date); dd.setHours(0,0,0,0);
+    return dd.getTime() === now.getTime();
+  });
+}
+
+function formatDate(iso) {
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+// ── TAB SWITCHING ──────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelector('[data-tab="' + name + '"]').classList.add('active');
+  currentTab = name;
+  localStorage.setItem('ot-tab', name);
+}
+
+function showSub(tab, name) {
+  const container = document.getElementById('tab-' + tab);
+  container.querySelectorAll('.sub-view').forEach(el => el.classList.remove('active'));
+  document.getElementById(tab.replace('bookings','book').replace('tips','tips') + '-' + name).classList.add('active');
+  container.querySelectorAll('.sub-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.sub === name);
+  });
+  subState[tab] = name;
+  localStorage.setItem('ot-sub-' + tab, name);
+}
+
+function buildSubNav(tab, items) {
+  const nav = document.getElementById(tab + '-subnav');
+  nav.innerHTML = items.map(([key, label]) =>
+    `<button class="sub-btn${subState[tab] === key ? ' active' : ''}" data-sub="${key}" onclick="showSub('${tab}','${key}')">${label}</button>`
+  ).join('');
+}
+
+// ── HOME TAB ──────────────────────────────────────────────
+function renderHome() {
+  const cd = getDaysUntilTrip();
+  document.getElementById('countdown-text').textContent = cd.text;
+
+  document.getElementById('quick-links').innerHTML = [
+    ['bookings','flights','🎫','Bookings'],
+    ['info','heights','📏','Heights'],
+    ['bookings','dining','🍽️','Dining'],
+    ['info','weather','🌧️','Weather'],
+    ['tips','tips','💡','Tips'],
+    ['tips','actions','✅','Checklist']
+  ].map(([tab,sub,icon,label]) =>
+    `<button class="quick-link-btn" onclick="showTab('${tab}');showSub('${tab}','${sub}')">
+      <span class="ql-icon">${icon}</span>${label}</button>`
+  ).join('');
+
+  const today = getCurrentDay();
+  const tc = document.getElementById('today-card');
+  if (today) {
+    tc.innerHTML = `
+      <div class="card" style="border-color: var(--accent);">
+        <div class="card-title">Today — ${esc(today.label)}</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">${formatDate(today.date)}</div>
+        ${today.mustDos.length ? `<div style="margin-bottom:8px;"><strong style="font-size:12px;">Must-dos:</strong> ${today.mustDos.map(m=>`<span class="must-do-chip">${esc(m)}</span>`).join(' ')}</div>` : ''}
+        ${today.schedule.length ? `<div class="schedule-list" style="margin-top:4px;">${today.schedule.slice(0,4).map(s=>`<div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="flex-shrink:0;width:72px;color:var(--gold);font-size:11px;font-weight:600;">${esc(s.time)}</span><span>${esc(s.activity)}</span></div>`).join('')}</div>` : ''}
+      </div>`;
+  } else {
+    tc.innerHTML = `
+      <div class="card">
+        <div class="card-title">Trip Overview</div>
+        <ul class="tip-list">
+          <li>3 parks · 3 park days (Fri–Sun)</li>
+          <li>Epic Universe — Friday, rope drop strategy</li>
+          <li>Islands of Adventure — Saturday, Hard Rock perks</li>
+          <li>Universal Studios Florida — Sunday, Express Pass all day</li>
+          <li>Midday retreat every day: leave by 12:30, return by 2:30</li>
+        </ul>
+      </div>`;
+  }
+}
+
+// ── DAYS TAB ──────────────────────────────────────────────
+function renderDays() {
+  const today = getCurrentDay();
+  document.getElementById('days-container').innerHTML =
+    TRIP_DATA.itinerary.days.map(day => {
+      const isToday = today && today.date === day.date;
+      const hasPark = !!day.park;
+      return `
+        <details ${isToday ? 'open' : ''}>
+          <summary>
+            <div class="label-row">
+              <span style="font-size:18px;">${day.parkEmoji}</span>
+              <div>
+                <div style="font-weight:700;">Day ${day.dayNumber} — ${esc(day.label)}</div>
+                <div class="day-park">${formatDate(day.date)}</div>
+              </div>
+              ${isToday ? '<span class="badge badge-ok">TODAY</span>' : ''}
+              ${day.perks.expressPass ? '<span class="badge badge-perk">Express Pass</span>' : ''}
+              ${day.perks.epa ? '<span class="badge badge-perk">EPA</span>' : ''}
+            </div>
+          </summary>
+          <div class="details-body">
+            ${day.perkNote ? `<div class="callout callout-info" style="margin-bottom:10px;">${esc(day.perkNote)}</div>` : ''}
+            ${day.notes ? `<div class="callout callout-warn" style="margin-bottom:10px;">${esc(day.notes)}</div>` : ''}
+            <ul class="schedule-list">
+              ${day.schedule.map(s => `
+                <li>
+                  <span class="schedule-time">${esc(s.time)}</span>
+                  <span>${esc(s.activity)}</span>
+                </li>`).join('')}
+            </ul>
+            ${day.mustDos.length ? `
+              <div class="must-do-row">
+                <span style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;align-self:center;">Must-dos:</span>
+                ${day.mustDos.map(m => `<span class="must-do-chip">${esc(m)}</span>`).join('')}
+              </div>` : ''}
+            ${day.niceToDos && day.niceToDos.length ? `
+              <div class="must-do-row">
+                <span style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;align-self:center;">Nice-to-dos:</span>
+                ${day.niceToDos.map(m => `<span class="nice-chip">${esc(m)}</span>`).join('')}
+              </div>` : ''}
+            ${day.dining ? `
+              <div class="callout callout-success" style="margin-top:10px;">
+                🍽️ <strong>${esc(day.dining.name)}</strong> · ${esc(day.dining.time)} · ${esc(day.dining.location)}
+                ${day.dining.confirmed ? ' ✅' : ''}
+              </div>` : ''}
+          </div>
+        </details>`;
+    }).join('');
+}
+
+// ── INFO TAB ──────────────────────────────────────────────
+function renderInfo() {
+  buildSubNav('info', [['family','Family'],['perks','Perks'],['heights','Heights'],['weather','Weather']]);
+
+  // Family
+  document.getElementById('info-family').innerHTML = `
+    <div class="section-title">The Family</div>
+    <div class="table-wrap">
+      <table class="family-table">
+        <thead><tr><th>Person</th><th>Notes</th></tr></thead>
+        <tbody>${TRIP_DATA.family.members.map(m=>`
+          <tr><td>${esc(m.name)}<br><span style="font-size:11px;color:var(--text2);font-weight:400;">${esc(m.role)}</span></td><td style="font-size:13px;">${esc(m.notes)}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="section-title" style="margin-top:16px;">Chill-Vibe Rules</div>
+    ${TRIP_DATA.family.chillRules.map(r=>`
+      <div class="chill-rule">
+        <div class="rule-num">${r.number}</div>
+        <div><div class="rule-title">${esc(r.title)}</div><div style="font-size:13px;color:var(--text2);">${esc(r.text)}</div></div>
+      </div>`).join('')}
+    <div class="section-title" style="margin-top:16px;">Planning Philosophy</div>
+    <ul class="tip-list">${TRIP_DATA.family.philosophy.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+
+  // Perks
+  document.getElementById('info-perks').innerHTML = `
+    <div class="section-title">Perks by Day</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Day</th><th>Park</th><th>EPA</th><th>Express Pass</th></tr></thead>
+        <tbody>${TRIP_DATA.perks.byDay.map(p=>`
+          <tr>
+            <td style="font-weight:600;font-size:13px;">${esc(p.day)}</td>
+            <td style="font-size:13px;">${esc(p.park)}</td>
+            <td class="${p.epa?'perk-yes':'perk-no'}">${p.epa?'✅ '+esc(p.epaNote||'Yes'):'❌ None'}</td>
+            <td class="${p.expressPass?'perk-yes':'perk-no'}">${p.expressPass?'✅ '+esc(p.expressPassNote||'Yes'):'❌ None'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="section-title" style="margin-top:16px;">Quick Reference</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Park</th><th>First Ride</th><th>Midday</th><th>Dinner</th></tr></thead>
+        <tbody>${TRIP_DATA.perks.quickRef.map(r=>`
+          <tr>
+            <td style="font-weight:600;font-size:13px;">${esc(r.label)}<br><span style="font-size:11px;color:var(--text2);font-weight:400;">${esc(r.day)}</span></td>
+            <td style="font-size:13px;">${esc(r.firstRide)}</td>
+            <td style="font-size:13px;">${esc(r.midday)}</td>
+            <td style="font-size:13px;">${esc(r.dinner)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="section-title" style="margin-top:16px;">EPA Rules</div>
+    <ul class="tip-list">${TRIP_DATA.perks.epaRules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>
+    <div class="section-title" style="margin-top:16px;">Campus Geography</div>
+    ${TRIP_DATA.perks.campusGeography.map(c=>`
+      <div class="callout callout-info" style="margin-bottom:6px;"><strong>${esc(c.label)}:</strong> ${esc(c.note)}</div>`).join('')}
+    <div class="callout callout-warn" style="margin-top:6px;"><strong>Bag Storage Sunday:</strong> ${esc(TRIP_DATA.perks.bagStorage)}</div>`;
+
+  // Heights
+  const h = TRIP_DATA.heights.sterling;
+  function heightRows(rides) {
+    return rides.map(r => {
+      const cls = r.status === 'ok' ? 'badge-ok' : r.status === 'warn' ? 'badge-warn' : 'badge-danger';
+      const label = r.status === 'ok' ? '✅ Good' : r.status === 'warn' ? '⚠️ Measure' : '🔴 Exactly minimum';
+      return `<tr>
+        <td style="font-size:13px;">${esc(r.ride)}</td>
+        <td style="font-size:13px;text-align:center;">${r.min}"</td>
+        <td><span class="badge ${cls}">${label}</span>${r.warnNote?`<br><span style="font-size:11px;color:var(--text2);">${esc(r.warnNote)}</span>`:''}</td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('info-heights').innerHTML = `
+    <div class="callout callout-info" style="margin-bottom:12px;">
+      <strong>Sterling — ${esc(h.heightDisplay)}</strong><br>${esc(h.note)}
+    </div>
+    <div class="callout callout-danger" style="margin-bottom:12px;">
+      <strong>⚠️ Borderline Rides — Action Required</strong>
+      ${h.borderlineRides.map(r=>`<div style="margin-top:6px;"><strong>${esc(r.ride)} (${r.min}") — ${esc(r.park)}:</strong> ${esc(r.action)}</div>`).join('')}
+      <div style="margin-top:8px;font-size:13px;color:var(--text2);"><strong>Child Swap:</strong> ${esc(h.childSwap)}</div>
+    </div>
+    <details open>
+      <summary><strong>Epic Universe</strong></summary>
+      <div class="details-body"><div class="table-wrap"><table>
+        <thead><tr><th>Ride</th><th>Min</th><th>Status</th></tr></thead>
+        <tbody>${heightRows(h.byPark.epicUniverse)}</tbody>
+      </table></div></div>
+    </details>
+    <details>
+      <summary><strong>Islands of Adventure</strong></summary>
+      <div class="details-body"><div class="table-wrap"><table>
+        <thead><tr><th>Ride</th><th>Min</th><th>Status</th></tr></thead>
+        <tbody>${heightRows(h.byPark.islandsOfAdventure)}</tbody>
+      </table></div></div>
+    </details>
+    <details>
+      <summary><strong>Universal Studios Florida</strong></summary>
+      <div class="details-body"><div class="table-wrap"><table>
+        <thead><tr><th>Ride</th><th>Min</th><th>Status</th></tr></thead>
+        <tbody>${heightRows(h.byPark.universalStudios)}</tbody>
+      </table></div></div>
+    </details>`;
+
+  // Weather
+  const w = TRIP_DATA.weather;
+  document.getElementById('info-weather').innerHTML = `
+    <div class="callout callout-info" style="margin-bottom:10px;">${esc(w.overview)}</div>
+    <details>
+      <summary><strong>Orlando May Weather Reality</strong></summary>
+      <div class="details-body"><ul class="tip-list">${w.reality.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
+    </details>
+    <details>
+      <summary><strong>What to Pack</strong></summary>
+      <div class="details-body"><ul class="tip-list">${w.whatToPack.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
+    </details>
+    ${w.byDay.map(day=>`
+      <details>
+        <summary><strong>${esc(day.dayLabel)}</strong></summary>
+        <div class="details-body">
+          <div class="callout callout-warn" style="margin-bottom:10px;"><strong>Retreat:</strong> ${esc(day.retreatOption)}</div>
+          ${day.note ? `<div class="callout callout-info" style="margin-bottom:10px;">${esc(day.note)}</div>` : ''}
+          <div class="table-wrap"><table>
+            <thead><tr><th>Planned</th><th>If Raining</th></tr></thead>
+            <tbody>${day.contingencies.map(c=>`<tr><td style="font-size:12px;">${esc(c.planned)}</td><td style="font-size:12px;">${esc(c.ifRaining)}</td></tr>`).join('')}</tbody>
+          </table></div>
+        </div>
+      </details>`).join('')}
+    <details>
+      <summary><strong>General Rain Rules</strong></summary>
+      <div class="details-body"><ul class="tip-list">${w.generalRules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
+    </details>`;
+}
+
+// ── BOOKINGS TAB ──────────────────────────────────────────
+function renderBookings() {
+  buildSubNav('bookings', [['flights','✈️ Flights'],['hotels','🏨 Hotels'],['tickets','🎟️ Tickets'],['dining','🍽️ Dining'],['costs','💰 Costs']]);
+
+  const b = TRIP_DATA.bookings;
+
+  // Flights & Car
+  document.getElementById('book-flights').innerHTML = `
+    <div class="section-title">Flights — JetBlue</div>
+    <div class="card">
+      <div class="card-title">Confirmation</div>
+      <div class="conf-number" onclick="copyText('${b.flights.confirmation}')">
+        ${b.flights.confirmation}
+        <button class="conf-copy-btn">Copy</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Outbound</th><th>Return</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600;font-size:12px;">Date</td><td style="font-size:13px;">${esc(b.flights.outbound.date)}</td><td style="font-size:13px;">${esc(b.flights.return.date)}</td></tr>
+          <tr><td style="font-weight:600;font-size:12px;">Flight</td><td style="font-size:13px;">${esc(b.flights.outbound.flight)}</td><td style="font-size:13px;">${esc(b.flights.return.flight)}</td></tr>
+          <tr><td style="font-weight:600;font-size:12px;">Route</td><td style="font-size:13px;">${esc(b.flights.outbound.route)}</td><td style="font-size:13px;">${esc(b.flights.return.route)}</td></tr>
+          <tr><td style="font-weight:600;font-size:12px;">Departs</td><td style="font-size:13px;">${esc(b.flights.outbound.departs)}</td><td style="font-size:13px;">${esc(b.flights.return.departs)}</td></tr>
+          <tr><td style="font-weight:600;font-size:12px;">Arrives</td><td style="font-size:13px;">${esc(b.flights.outbound.arrives)}</td><td style="font-size:13px;">${esc(b.flights.return.arrives)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout callout-info" style="margin:8px 0;font-size:13px;">
+      <strong>Seats Outbound:</strong> ${esc(b.flights.outbound.seats)}<br>
+      <strong>Seats Return:</strong> ${esc(b.flights.return.seats)}
+    </div>
+    ${b.flights.notes.map(n=>`<div class="callout callout-warn" style="margin-bottom:6px;">${esc(n)}</div>`).join('')}
+
+    <div class="section-title" style="margin-top:16px;">Car Rental — Budget</div>
+    <div class="card">
+      <div class="card-title">Confirmation</div>
+      <div class="conf-number" onclick="copyText('${b.car.confirmation}')">
+        ${b.car.confirmation}
+        <button class="conf-copy-btn">Copy</button>
+      </div>
+    </div>
+    <ul class="tip-list" style="margin-top:4px;">
+      <li>${esc(b.car.vehicle)}</li>
+      <li><strong>Pick-up:</strong> ${esc(b.car.pickup)}</li>
+      <li><strong>Drop-off:</strong> ${esc(b.car.dropoff)}</li>
+      <li><strong>Total:</strong> ${esc(b.car.total)}</li>
+    </ul>
+    ${b.car.notes.map(n=>`<div class="callout callout-warn" style="margin-top:6px;">${esc(n)}</div>`).join('')}`;
+
+  // Hotels
+  document.getElementById('book-hotels').innerHTML = `
+    <div class="section-title">Timeshare — Hilton Grand Vacations</div>
+    <div class="card">
+      <div class="card-title">Confirmation</div>
+      <div class="conf-number" onclick="copyText('${b.timeshare.confirmation}')">
+        ${b.timeshare.confirmation}
+        <button class="conf-copy-btn">Copy</button>
+      </div>
+    </div>
+    <ul class="tip-list" style="margin-top:4px;">
+      <li><strong>Check-in:</strong> ${esc(b.timeshare.checkin)} · <strong>Check-out:</strong> ${esc(b.timeshare.checkout)}</li>
+      <li>${esc(b.timeshare.unit)}</li>
+      <li>${esc(b.timeshare.location)}</li>
+    </ul>
+    ${b.timeshare.notes.map(n=>`<div class="callout callout-info" style="margin-top:6px;">${esc(n)}</div>`).join('')}
+
+    <div class="section-title" style="margin-top:16px;">Hard Rock Hotel</div>
+    <div class="card">
+      <div class="card-title">Confirmation</div>
+      <div class="conf-number" onclick="copyText('${b.hardRock.confirmation}')">
+        ${b.hardRock.confirmation}
+        <button class="conf-copy-btn">Copy</button>
+      </div>
+    </div>
+    <div class="callout callout-success" style="margin:8px 0;"><strong>Key Perk:</strong> ${esc(b.hardRock.keyPerk)}</div>
+    <ul class="tip-list">
+      <li><strong>Check-in:</strong> ${esc(b.hardRock.checkin)} · <strong>Check-out:</strong> ${esc(b.hardRock.checkout)}</li>
+      <li>${esc(b.hardRock.room)}</li>
+      <li>${esc(b.hardRock.location)}</li>
+    </ul>
+    ${b.hardRock.notes.map(n=>`<div class="callout callout-warn" style="margin-top:6px;">${esc(n)}</div>`).join('')}`;
+
+  // Tickets
+  document.getElementById('book-tickets').innerHTML = `
+    <div class="section-title">Park Tickets</div>
+    <div class="card">
+      <div class="card-title">Confirmation</div>
+      <div class="conf-number" onclick="copyText('${b.tickets.confirmation}')">
+        ${b.tickets.confirmation}
+        <button class="conf-copy-btn">Copy</button>
+      </div>
+    </div>
+    <ul class="tip-list" style="margin-top:4px;">
+      <li><strong>Type:</strong> ${esc(b.tickets.type)}</li>
+      <li><strong>Guests:</strong> ${esc(b.tickets.guests)}</li>
+      <li><strong>Start Date:</strong> ${esc(b.tickets.startDate)}</li>
+      <li>${esc(b.tickets.window)}</li>
+      <li>${esc(b.tickets.includes)}</li>
+    </ul>
+    ${b.tickets.notes.map(n=>`<div class="callout callout-danger" style="margin-top:8px;">${esc(n)}</div>`).join('')}`;
+
+  // Dining
+  const d = TRIP_DATA.dining;
+  document.getElementById('book-dining').innerHTML = `
+    <div class="section-title">Confirmed Reservations</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Restaurant</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+        <tbody>${d.confirmed.map(r=>`
+          <tr>
+            <td style="font-weight:700;">${esc(r.name)}<br><span style="font-size:11px;color:var(--text2);">${esc(r.location)}</span></td>
+            <td style="font-size:13px;">${esc(r.date)}</td>
+            <td style="font-size:13px;">${esc(r.time)}</td>
+            <td><span class="badge ${r.status.startsWith('✅')?'badge-conf':'badge-gray'}">${esc(r.status)}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="section-title" style="margin-top:14px;">Planned (No Reservation)</div>
+    ${d.planned.map(r=>`
+      <div class="card" style="margin-bottom:8px;">
+        <div style="font-weight:700;">${esc(r.name)}</div>
+        <div style="font-size:13px;color:var(--text2);">${esc(r.date)} · ${esc(r.time)} · ${esc(r.location)}</div>
+        ${r.note?`<div style="font-size:12px;margin-top:4px;">${esc(r.note)}</div>`:''}
+      </div>`).join('')}
+    <div class="section-title" style="margin-top:14px;">Butterbeer Guide</div>
+    <div class="callout callout-info" style="margin-bottom:8px;"><strong>Best format:</strong> ${esc(d.butterBeer.bestFormat)}<br><strong>Also available:</strong> ${esc(d.butterBeer.alsoAvailable)}<br><strong>Budget:</strong> ${esc(d.butterBeer.budget)}</div>
+    ${d.butterBeer.indoorLocations.map(l=>`
+      <div class="callout callout-success" style="margin-bottom:6px;">🍺 <strong>${esc(l.name)}</strong> — ${esc(l.location)}<br><span style="font-size:12px;">${esc(l.note)}</span></div>`).join('')}
+    <div class="section-title" style="margin-top:14px;">Dining Tips</div>
+    <ul class="tip-list">${d.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
+
+  // Costs
+  const a = TRIP_DATA.accessories;
+  document.getElementById('book-costs').innerHTML = `
+    <div class="section-title">Hidden Costs Budget</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Est. Cost</th><th>Notes</th></tr></thead>
+        <tbody>${a.costTable.map(r=>`
+          <tr>
+            <td style="font-weight:600;font-size:13px;">${esc(r.item)}</td>
+            <td style="color:var(--gold);font-size:13px;white-space:nowrap;">${esc(r.est)}</td>
+            <td style="font-size:12px;color:var(--text2);">${esc(r.notes)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="section-title" style="margin-top:14px;">Interactive Wands</div>
+    <div class="callout callout-info" style="margin-bottom:6px;">
+      <strong>${esc(a.wands.type)}</strong><br>
+      <strong>Buy at:</strong> ${esc(a.wands.whereToBuy)}<br>
+      <strong>Works in:</strong> ${a.wands.worksIn.join(' · ')}<br>
+      <strong>Spell locations:</strong> ${esc(a.wands.spellLocations)}
+    </div>
+    <div class="section-title" style="margin-top:14px;">Power-Up Bands</div>
+    <div class="callout callout-info" style="margin-bottom:6px;">
+      <strong>Price:</strong> ${esc(a.powerUpBands.price)}<br>
+      <strong>Who:</strong> ${esc(a.powerUpBands.who)}<br>
+      <strong>Used for:</strong> ${esc(a.powerUpBands.usedFor)}
+    </div>
+    ${a.powerUpBands.warnings.map(w=>`<div class="callout callout-warn" style="margin-bottom:6px;">${esc(w)}</div>`).join('')}
+    <div class="section-title" style="margin-top:14px;">Money-Saving Tips</div>
+    <div class="callout callout-success" style="margin-bottom:6px;"><strong>Belt Bag Hack:</strong> ${esc(a.beltBagHack)}</div>
+    <div class="callout callout-info">${esc(a.souvenirStrategy)}</div>`;
+}
+
+// ── TIPS TAB ──────────────────────────────────────────────
+function renderTips() {
+  buildSubNav('tips', [['tips','💡 Tips'],['actions','✅ Checklist']]);
+
+  // Tips
+  document.getElementById('tips-tips').innerHTML =
+    TRIP_DATA.tips.categories.map(cat => `
+      <details>
+        <summary><strong>${esc(cat.title)}</strong></summary>
+        <div class="details-body">
+          <ul class="tip-list">${cat.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>
+        </div>
+      </details>`).join('');
+
+  // Action Items
+  renderActionItems();
+}
+
+function renderActionItems() {
+  const saved = JSON.parse(localStorage.getItem('ot-checklist') || '{}');
+  const todo = TRIP_DATA.actionItems.todo;
+  const done = TRIP_DATA.actionItems.done;
+
+  document.getElementById('tips-actions').innerHTML = `
+    <div class="section-title">Before the Trip</div>
+    <ul class="checklist" id="todo-list">
+      ${todo.map(item => {
+        const checked = !!saved[item.id];
+        return `<li class="${checked?'done':''}">
+          <input type="checkbox" class="check-input" id="${item.id}" ${checked?'checked':''} onchange="toggleCheck('${item.id}',this.checked)">
+          <label class="check-label" for="${item.id}">${esc(item.text)}</label>
+        </li>`;
+      }).join('')}
+    </ul>
+    <div class="section-title" style="margin-top:14px;">Already Done ✅</div>
+    <ul class="checklist">
+      ${done.map(item => `
+        <li class="done">
+          <input type="checkbox" class="check-input" checked disabled>
+          <label class="check-label">${esc(item.text)}</label>
+        </li>`).join('')}
+    </ul>`;
+}
+
+function toggleCheck(id, checked) {
+  const saved = JSON.parse(localStorage.getItem('ot-checklist') || '{}');
+  saved[id] = checked;
+  localStorage.setItem('ot-checklist', JSON.stringify(saved));
+  const li = document.getElementById(id).closest('li');
+  li.classList.toggle('done', checked);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+function init() {
+  renderHome();
+  renderDays();
+  renderInfo();
+  renderBookings();
+  renderTips();
+
+  // Restore last-used tab and sub-tabs
+  showTab(currentTab);
+  if (subState.info !== 'family') showSub('info', subState.info);
+  if (subState.bookings !== 'flights') showSub('bookings', subState.bookings);
+  if (subState.tips !== 'tips') showSub('tips', subState.tips);
+
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/orlando-trip/sw.js', { scope: '/orlando-trip/' })
+      .catch(() => {});
+  }
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
