@@ -784,47 +784,34 @@ function renderInfo() {
 
   // Heights
   const h = TRIP_DATA.heights.sterling;
-  function heightRows(rides) {
-    return rides.map(r => {
-      const cls = r.status === 'ok' ? 'badge-ok' : r.status === 'warn' ? 'badge-warn' : 'badge-danger';
-      const label = r.status === 'ok' ? '✅ Good' : r.status === 'warn' ? '⚠️ Measure' : '🔴 Exactly minimum';
-      return `<tr>
-        <td style="font-size:13px;">${esc(r.ride)}</td>
-        <td style="font-size:13px;text-align:center;">${r.min}"</td>
-        <td><span class="badge ${cls}">${label}</span>${r.warnNote?`<br><span style="font-size:11px;color:var(--text2);">${esc(r.warnNote)}</span>`:''}</td>
-      </tr>`;
-    }).join('');
+  function heightRow(r) {
+    const cls = r.status === 'ok' ? 'badge-ok' : r.status === 'warn' ? 'badge-warn' : 'badge-danger';
+    const label = r.status === 'ok' ? '✅ Clear' : r.status === 'warn' ? '⚠️ Measure' : '🔴 Exactly minimum';
+    return `<tr>
+      <td style="font-size:13px;">${esc(r.ride)}</td>
+      <td style="font-size:13px;text-align:center;">${r.min}"</td>
+      <td><span class="badge ${cls}">${label}</span>${r.warnNote?`<br><span style="font-size:11px;color:var(--text2);">${esc(r.warnNote)}</span>`:''}</td>
+    </tr>`;
   }
+  const parks = ['Epic Universe','IOA','USF'];
+  const parkLabels = { 'Epic Universe': 'Epic Universe', 'IOA': 'Islands of Adventure', 'USF': 'Universal Studios Florida' };
   document.getElementById('info-heights').innerHTML = `
     <div class="callout callout-info" style="margin-bottom:12px;">
       <strong>Sterling — ${esc(h.heightDisplay)}</strong><br>${esc(h.note)}
     </div>
     <div class="callout callout-danger" style="margin-bottom:12px;">
-      <strong>⚠️ Borderline Rides — Action Required</strong>
+      <strong>⚠️ One Ride Requires Attention</strong>
       ${h.borderlineRides.map(r=>`<div style="margin-top:6px;"><strong>${esc(r.ride)} (${r.min}") — ${esc(r.park)}:</strong> ${esc(r.action)}</div>`).join('')}
       <div style="margin-top:8px;font-size:13px;color:var(--text2);"><strong>Child Swap:</strong> ${esc(h.childSwap)}</div>
     </div>
-    <details open>
-      <summary><strong>Epic Universe</strong></summary>
-      <div class="details-body"><div class="table-wrap"><table>
-        <thead><tr><th>Ride</th><th>Min</th><th>Status</th></tr></thead>
-        <tbody>${heightRows(h.byPark.epicUniverse)}</tbody>
-      </table></div></div>
-    </details>
-    <details>
-      <summary><strong>Islands of Adventure</strong></summary>
-      <div class="details-body"><div class="table-wrap"><table>
-        <thead><tr><th>Ride</th><th>Min</th><th>Status</th></tr></thead>
-        <tbody>${heightRows(h.byPark.islandsOfAdventure)}</tbody>
-      </table></div></div>
-    </details>
-    <details>
-      <summary><strong>Universal Studios Florida</strong></summary>
-      <div class="details-body"><div class="table-wrap"><table>
-        <thead><tr><th>Ride</th><th>Min</th><th>Status</th></tr></thead>
-        <tbody>${heightRows(h.byPark.universalStudios)}</tbody>
-      </table></div></div>
-    </details>`;
+    ${parks.map((park, i) => `
+      <details ${i===0?'open':''}>
+        <summary><strong>${parkLabels[park]}</strong></summary>
+        <div class="details-body"><div class="table-wrap"><table>
+          <thead><tr><th>Ride</th><th>Min</th><th>Status</th></tr></thead>
+          <tbody>${h.rides.filter(r=>r.park===park).map(heightRow).join('')}</tbody>
+        </table></div></div>
+      </details>`).join('')}`;
 
   // Weather
   const w = TRIP_DATA.weather;
@@ -838,16 +825,12 @@ function renderInfo() {
       <summary><strong>What to Pack</strong></summary>
       <div class="details-body"><ul class="tip-list">${w.whatToPack.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
     </details>
-    ${w.byDay.map(day=>`
+    ${w.scenarios.map(s=>`
       <details>
-        <summary><strong>${esc(day.dayLabel)}</strong></summary>
+        <summary><strong>${esc(s.label)}</strong></summary>
         <div class="details-body">
-          <div class="callout callout-warn" style="margin-bottom:10px;"><strong>Retreat:</strong> ${esc(day.retreatOption)}</div>
-          ${day.note ? `<div class="callout callout-info" style="margin-bottom:10px;">${esc(day.note)}</div>` : ''}
-          <div class="table-wrap"><table>
-            <thead><tr><th>Planned</th><th>If Raining</th></tr></thead>
-            <tbody>${day.contingencies.map(c=>`<tr><td style="font-size:12px;">${esc(c.planned)}</td><td style="font-size:12px;">${esc(c.ifRaining)}</td></tr>`).join('')}</tbody>
-          </table></div>
+          <div style="font-size:14px;margin-bottom:8px;">${esc(s.plan)}</div>
+          ${s.indoorOptions ? `<div class="callout callout-info"><strong>Indoor options:</strong><ul class="tip-list" style="margin-top:6px;">${s.indoorOptions.map(o=>`<li>${esc(o)}</li>`).join('')}</ul></div>` : ''}
         </div>
       </details>`).join('')}
     <details>
@@ -962,26 +945,31 @@ function renderBookings() {
   const d = TRIP_DATA.dining;
   document.getElementById('book-dining').innerHTML = `
     <div class="section-title">Confirmed Reservations</div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Restaurant</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
-        <tbody>${d.confirmed.map(r=>`
-          <tr>
-            <td style="font-weight:700;">${esc(r.name)}<br><span style="font-size:11px;color:var(--text2);">${esc(r.location)}</span></td>
-            <td style="font-size:13px;">${esc(r.date)}</td>
-            <td style="font-size:13px;">${esc(r.time)}</td>
-            <td><span class="badge ${r.status.startsWith('✅')?'badge-conf':'badge-gray'}">${esc(r.status)}</span></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>
-    <div class="section-title" style="margin-top:14px;">Planned (No Reservation)</div>
+    ${d.confirmed.map(r=>`
+      <div class="card" style="margin-bottom:8px;border-color:rgba(46,204,113,0.4);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+          <div>
+            <div style="font-weight:700;font-size:15px;">${esc(r.name)}</div>
+            <div style="font-size:12px;color:var(--text2);">${esc(r.location)}</div>
+          </div>
+          <span class="badge badge-conf">${esc(r.status)}</span>
+        </div>
+        <div style="margin-top:8px;font-size:13px;">${esc(r.date)} · ${esc(r.time)}</div>
+        ${r.bookingId?`<div style="margin-top:6px;font-family:monospace;font-size:13px;color:var(--gold);" onclick="copyText('${esc(r.bookingId)}')">${esc(r.bookingId)} <span style="font-family:system-ui;font-size:11px;color:var(--text2);">(tap to copy)</span></div>`:''}
+      </div>`).join('')}
+    <div class="section-title" style="margin-top:14px;">Other Meals</div>
     ${d.planned.map(r=>`
       <div class="card" style="margin-bottom:8px;">
         <div style="font-weight:700;">${esc(r.name)}</div>
         <div style="font-size:13px;color:var(--text2);">${esc(r.date)} · ${esc(r.time)} · ${esc(r.location)}</div>
         ${r.note?`<div style="font-size:12px;margin-top:4px;">${esc(r.note)}</div>`:''}
       </div>`).join('')}
+    <div class="section-title" style="margin-top:14px;">Snacks & Must-Tries</div>
+    ${d.snacks.map(s=>`
+      <details style="margin-bottom:6px;">
+        <summary><strong>${esc(s.park)}</strong></summary>
+        <div class="details-body"><ul class="tip-list">${s.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul></div>
+      </details>`).join('')}
     <div class="section-title" style="margin-top:14px;">Butterbeer Guide</div>
     <div class="callout callout-info" style="margin-bottom:8px;"><strong>Best format:</strong> ${esc(d.butterBeer.bestFormat)}<br><strong>Also available:</strong> ${esc(d.butterBeer.alsoAvailable)}<br><strong>Budget:</strong> ${esc(d.butterBeer.budget)}</div>
     ${d.butterBeer.indoorLocations.map(l=>`
