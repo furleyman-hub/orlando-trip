@@ -145,6 +145,7 @@ window.TRIP_DATA = {
   bookings: {
     flights: {
       confirmation: "KNREIZ",
+      paymentStatus: "paid",
       airline: "JetBlue",
       outbound: {
         date: "Thursday 5/21",
@@ -171,6 +172,7 @@ window.TRIP_DATA = {
     },
     car: {
       confirmation: "37111644US3",
+      paymentStatus: "paid",
       vendor: "Budget",
       vehicle: "Compact — Kia Soul or similar · automatic · unlimited mileage",
       pickup: "Thu 5/21 at 6:59pm · Budget at MCO, 1 Jeff Fuqua Blvd, Orlando FL 32827",
@@ -180,6 +182,7 @@ window.TRIP_DATA = {
     },
     timeshare: {
       confirmation: "RCI 559466785",
+      paymentStatus: "paid",
       name: "Hilton Grand Vacations at SeaWorld Orlando",
       checkin: "Thu 5/21",
       checkout: "Tue 5/26 (one day after flight — no Monday morning rush)",
@@ -193,6 +196,7 @@ window.TRIP_DATA = {
     },
     hardRock: {
       confirmation: "OI-7A8VR8F7T6",
+      paymentStatus: "paid",
       name: "Hard Rock Hotel at Universal Orlando",
       checkin: "Sat 5/23",
       checkout: "Sun 5/24 (one night only)",
@@ -205,13 +209,15 @@ window.TRIP_DATA = {
       ]
     },
     tickets: {
-      confirmation: "OI-7A8VR8F7T6",
+      confirmation: null,
+      loadedInApp: true,
+      paymentStatus: "paid",
       type: "3-Day Park-to-Park",
       guests: "Julian · Jennifer · Jasper · Sterling Fox",
       startDate: "5/22/2026",
       window: "Valid any 3 days within a 7-day window",
       includes: "Covers Hogwarts Express both directions (requires park-to-park)",
-      notes: ["⚠️ Verify whether tickets cover Epic Universe — standard 3-Day Park-to-Park may only cover USF + IOA. Epic Universe may require separate admission. Check the ticket attachment email."]
+      notes: ["Epic Universe (Friday) does not include Express Pass — no Express Pass at Epic Universe. Express Pass is only active at IOA and USF via the Hard Rock Hotel room key (Saturday + Sunday)."]
     }
   },
 
@@ -221,7 +227,7 @@ window.TRIP_DATA = {
       { name: "Mythos", date: "Saturday 5/23", time: "4:15pm", location: "Islands of Adventure", status: "✅ Confirmed", bookingId: "#639120237617647104" }
     ],
     planned: [
-      { name: "Leaky Cauldron (primary) or Cowfish / Antojitos (Jasper's pick)", date: "Sunday 5/24", time: "~5:30pm", location: "Diagon Alley or CityWalk", note: "No reservation — arrive by 5:30pm on Memorial Day weekend" },
+      { name: "Cowfish or Antojitos (decide before trip)", date: "Sunday 5/24", time: "~5:30pm", location: "CityWalk", note: "No reservation needed — arrive by 5:30pm on Memorial Day weekend. Cowfish: sushi burgers, fun for kids. Antojitos: Mexican, livelier atmosphere." },
       { name: "Timeshare / grocery meals", date: "Thu–Mon", time: "All breakfasts + midday lunches", location: "Timeshare", note: "Stock at Publix or Walmart Thursday on the way from MCO" }
     ],
     snacks: [
@@ -375,14 +381,14 @@ window.TRIP_DATA = {
       usedFor: "Coin-collecting and interactive play throughout Super Nintendo World at Epic Universe"
     },
     costTable: [
-      { item: "Parking (Epic Universe, Fri)", est: "~$30/day", notes: "IOA/USF parking covered by Hard Rock stay" },
-      { item: "Lockers (if needed)", est: "$10–20/day", notes: "Belt bag hack avoids most of this" },
-      { item: "Wands (2 at ~$85)", est: "~$170", notes: "Buy Friday at Epic's Ministry of Magic" },
-      { item: "Power-Up Bands (×2)", est: "~$90", notes: "For Jasper + Sterling; buy online before trip" },
-      { item: "Grocery run (Thu)", est: "~$150–200", notes: "Covers full stay — breakfasts, lunches, Monday" },
-      { item: "Merchandise / souvenirs", est: "Budget separately", notes: "1 big + 1 small per kid recommended" },
-      { item: "In-park photos", est: "Variable", notes: "MyUniversalPhotos pass = unlimited option" },
-      { item: "Ponchos (×4)", est: "~$5–10 each at home", notes: "Buy before leaving NYC — in-park is ~$15 each" }
+      { item: "Parking (Epic Universe, Fri)", est: "~$30/day", low: 30, high: 30, notes: "IOA/USF parking covered by Hard Rock stay" },
+      { item: "Lockers (if needed)", est: "$10–20/day", low: 0, high: 20, notes: "Belt bag hack avoids most of this" },
+      { item: "Wands (2 at ~$85)", est: "~$170", low: 170, high: 170, notes: "Buy Friday at Epic's Ministry of Magic" },
+      { item: "Power-Up Bands (×2)", est: "~$90", low: 90, high: 90, notes: "For Jasper + Sterling; buy online before trip" },
+      { item: "Grocery run (Thu)", est: "~$150–200", low: 150, high: 200, notes: "Covers full stay — breakfasts, lunches, Monday" },
+      { item: "Merchandise / souvenirs", est: "Budget separately", low: 0, high: 0, notes: "1 big + 1 small per kid recommended" },
+      { item: "In-park photos", est: "Variable", low: 0, high: 0, notes: "MyUniversalPhotos pass = unlimited option" },
+      { item: "Ponchos (×4)", est: "~$5–10 each at home", low: 20, high: 40, notes: "Buy before leaving NYC — in-park is ~$15 each" }
     ],
     beltBagHack: "A small belt bag / fanny pack worn on the front slides under lap bars and between shoulder harnesses on most rides — accepted on most attractions, avoids locker fees entirely. One per adult recommended.",
     souvenirStrategy: "Set expectations before entering any park: each kid gets one big item (wand is already planned) and one smaller souvenir. Prevents the 'can I get this?' loop at every shop.",
@@ -455,7 +461,6 @@ window.TRIP_DATA = {
 
   actionItems: {
     todo: [
-      { id: "ai-1", text: "Verify park tickets cover Epic Universe — standard 3-Day Park-to-Park may only cover USF + IOA; Epic Universe may require separate admission. Check ticket attachment email (OI-7A8VR8F7T6)." },
       { id: "ai-2", text: "Call Hard Rock Hotel — confirm early room key / Express Pass issuance on Saturday morning bag drop (before room is ready)" },
       { id: "ai-3", text: "Measure Sterling's height — confirm he clears Incredible Hulk (54\" minimum, he is exactly at minimum). Wear thick-soled sneakers on IOA day." },
       { id: "ai-4", text: "Purchase Power-Up Bands for Jasper and Sterling at shopuniversal.com (~$45 each)" },
@@ -470,7 +475,8 @@ window.TRIP_DATA = {
       { id: "ad-3", text: "Book Hard Rock Hotel ✅ OI-7A8VR8F7T6 · Sat 5/23–Sun 5/24" },
       { id: "ad-4", text: "Book JetBlue flights ✅ KNREIZ · HPN↔MCO" },
       { id: "ad-5", text: "Book Budget car rental ✅ 37111644US3" },
-      { id: "ad-6", text: "Book Hilton Grand Vacations timeshare ✅ RCI 559466785" }
+      { id: "ad-6", text: "Book Hilton Grand Vacations timeshare ✅ RCI 559466785" },
+      { id: "ad-7", text: "Confirmed: Epic Universe tickets loaded in Universal app. No Express Pass at Epic Universe — Hard Rock Express Pass covers IOA + USF only (Sat/Sun)." }
     ]
   },
 

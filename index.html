@@ -436,6 +436,89 @@
     .label-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .day-park { font-size: 12px; color: var(--text2); }
     .row-flex { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+
+    /* ── SCHEDULE DONE STATE ── */
+    .schedule-done { text-decoration: line-through; opacity: 0.4; }
+    .schedule-list li { cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+    .schedule-list li:active { background: rgba(255,255,255,0.04); border-radius: 4px; }
+
+    /* ── EXPENSE TRACKER ── */
+    .expense-input-row {
+      display: flex;
+      gap: 8px;
+      margin: 10px 0;
+      align-items: center;
+    }
+    .expense-input-row input[type="text"] {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      padding: 9px 12px;
+      outline: none;
+    }
+    .expense-input-row input[type="text"]:focus { border-color: var(--accent); }
+    .expense-amount-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0 10px;
+      flex-shrink: 0;
+      width: 100px;
+    }
+    .expense-amount-wrap span { color: var(--text2); font-size: 14px; margin-right: 2px; }
+    .expense-amount-wrap input[type="number"] {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 14px;
+      width: 70px;
+      padding: 9px 0;
+      outline: none;
+    }
+    .expense-add-btn {
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 9px 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .expense-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .expense-item:last-child { border-bottom: none; }
+    .expense-item-desc { flex: 1; }
+    .expense-item-amt { color: var(--gold); font-weight: 600; flex-shrink: 0; }
+    .expense-del-btn {
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0 4px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .expense-del-btn:hover { color: var(--red); }
+    .expense-total {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green);
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -603,6 +686,7 @@ function formatDate(iso) {
 
 // ── TAB SWITCHING ──────────────────────────────────────────
 function showTab(name) {
+  window.scrollTo(0, 0);
   document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
@@ -674,6 +758,7 @@ function renderHome() {
 // ── DAYS TAB ──────────────────────────────────────────────
 function renderDays() {
   const today = getCurrentDay();
+  const dayDone = JSON.parse(localStorage.getItem('ot-day-done') || '{}');
   document.getElementById('days-container').innerHTML =
     TRIP_DATA.itinerary.days.map(day => {
       const isToday = today && today.date === day.date;
@@ -696,11 +781,14 @@ function renderDays() {
             ${day.perkNote ? `<div class="callout callout-info" style="margin-bottom:10px;">${esc(day.perkNote)}</div>` : ''}
             ${day.notes ? `<div class="callout callout-warn" style="margin-bottom:10px;">${esc(day.notes)}</div>` : ''}
             <ul class="schedule-list">
-              ${day.schedule.map(s => `
-                <li>
+              ${day.schedule.map((s, i) => {
+                const doneKey = day.date + '-' + i;
+                const isDone = !!(dayDone[doneKey]);
+                return `<li class="${isDone ? 'schedule-done' : ''}" onclick="toggleDayItem('${day.date}',${i})">
                   <span class="schedule-time">${esc(s.time)}</span>
                   <span>${esc(s.activity)}</span>
-                </li>`).join('')}
+                </li>`;
+              }).join('')}
             </ul>
             ${day.mustDos.length ? `
               <div class="must-do-row">
@@ -711,6 +799,10 @@ function renderDays() {
               <div class="must-do-row">
                 <span style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;align-self:center;">Nice-to-dos:</span>
                 ${day.niceToDos.map(m => `<span class="nice-chip">${esc(m)}</span>`).join('')}
+              </div>` : ''}
+            ${day.park === 'Islands of Adventure' ? `
+              <div class="must-do-row">
+                <button class="nice-chip" style="border:none;cursor:pointer;background:rgba(52,152,219,0.15);color:#5dade2;border:1px solid rgba(52,152,219,0.4);" onclick="event.stopPropagation();showTab('info');showSub('info','heights')">📏 Check Heights</button>
               </div>` : ''}
             ${day.dining ? `
               <div class="callout callout-success" style="margin-top:10px;">
@@ -841,6 +933,13 @@ function renderInfo() {
 }
 
 // ── BOOKINGS TAB ──────────────────────────────────────────
+function payBadge(status) {
+  if (status === 'paid') return '<span class="badge badge-ok" style="margin-left:8px;">✅ Paid</span>';
+  if (status === 'pending') return '<span class="badge badge-warn" style="margin-left:8px;">⏳ Pending</span>';
+  if (status === 'verify') return '<span class="badge badge-danger" style="margin-left:8px;">🔍 Verify</span>';
+  return '';
+}
+
 function renderBookings() {
   buildSubNav('bookings', [['flights','✈️ Flights'],['hotels','🏨 Hotels'],['tickets','🎟️ Tickets'],['dining','🍽️ Dining'],['plants','🌿 Plants'],['costs','💰 Costs']]);
 
@@ -848,7 +947,7 @@ function renderBookings() {
 
   // Flights & Car
   document.getElementById('book-flights').innerHTML = `
-    <div class="section-title">Flights — JetBlue</div>
+    <div class="section-title">Flights — JetBlue${payBadge(b.flights.paymentStatus)}</div>
     <div class="card">
       <div class="card-title">Confirmation</div>
       <div class="conf-number" onclick="copyText('${b.flights.confirmation}')">
@@ -874,7 +973,7 @@ function renderBookings() {
     </div>
     ${b.flights.notes.map(n=>`<div class="callout callout-warn" style="margin-bottom:6px;">${esc(n)}</div>`).join('')}
 
-    <div class="section-title" style="margin-top:16px;">Car Rental — Budget</div>
+    <div class="section-title" style="margin-top:16px;">Car Rental — Budget${payBadge(b.car.paymentStatus)}</div>
     <div class="card">
       <div class="card-title">Confirmation</div>
       <div class="conf-number" onclick="copyText('${b.car.confirmation}')">
@@ -892,7 +991,7 @@ function renderBookings() {
 
   // Hotels
   document.getElementById('book-hotels').innerHTML = `
-    <div class="section-title">Timeshare — Hilton Grand Vacations</div>
+    <div class="section-title">Timeshare — Hilton Grand Vacations${payBadge(b.timeshare.paymentStatus)}</div>
     <div class="card">
       <div class="card-title">Confirmation</div>
       <div class="conf-number" onclick="copyText('${b.timeshare.confirmation}')">
@@ -907,7 +1006,7 @@ function renderBookings() {
     </ul>
     ${b.timeshare.notes.map(n=>`<div class="callout callout-info" style="margin-top:6px;">${esc(n)}</div>`).join('')}
 
-    <div class="section-title" style="margin-top:16px;">Hard Rock Hotel</div>
+    <div class="section-title" style="margin-top:16px;">Hard Rock Hotel${payBadge(b.hardRock.paymentStatus)}</div>
     <div class="card">
       <div class="card-title">Confirmation</div>
       <div class="conf-number" onclick="copyText('${b.hardRock.confirmation}')">
@@ -925,14 +1024,8 @@ function renderBookings() {
 
   // Tickets
   document.getElementById('book-tickets').innerHTML = `
-    <div class="section-title">Park Tickets</div>
-    <div class="card">
-      <div class="card-title">Confirmation</div>
-      <div class="conf-number" onclick="copyText('${b.tickets.confirmation}')">
-        ${b.tickets.confirmation}
-        <button class="conf-copy-btn">Copy</button>
-      </div>
-    </div>
+    <div class="section-title">Park Tickets${payBadge(b.tickets.paymentStatus)}</div>
+    <div class="callout callout-success" style="margin-bottom:10px;">✅ Tickets loaded in Universal app — no separate confirmation code</div>
     <ul class="tip-list" style="margin-top:4px;">
       <li><strong>Type:</strong> ${esc(b.tickets.type)}</li>
       <li><strong>Guests:</strong> ${esc(b.tickets.guests)}</li>
@@ -940,7 +1033,7 @@ function renderBookings() {
       <li>${esc(b.tickets.window)}</li>
       <li>${esc(b.tickets.includes)}</li>
     </ul>
-    ${b.tickets.notes.map(n=>`<div class="callout callout-danger" style="margin-top:8px;">${esc(n)}</div>`).join('')}`;
+    ${b.tickets.notes.map(n=>`<div class="callout callout-info" style="margin-top:8px;">${esc(n)}</div>`).join('')}`;
 
   // Dining
   const d = TRIP_DATA.dining;
@@ -1014,8 +1107,14 @@ function renderBookings() {
 
   // Costs
   const a = TRIP_DATA.accessories;
+  const costLow = a.costTable.reduce((s,r) => s + r.low, 0);
+  const costHigh = a.costTable.reduce((s,r) => s + r.high, 0);
   document.getElementById('book-costs').innerHTML = `
-    <div class="section-title">Hidden Costs Budget</div>
+    <div class="section-title">Pre-Trip Budget</div>
+    <div class="callout callout-info" style="margin-bottom:10px;">
+      Estimated out-of-pocket: <strong>~$${costLow} – $${costHigh}</strong>
+      <span style="font-size:12px;color:var(--text2);"> (excludes merch &amp; photos)</span>
+    </div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Item</th><th>Est. Cost</th><th>Notes</th></tr></thead>
@@ -1028,6 +1127,14 @@ function renderBookings() {
         </tbody>
       </table>
     </div>
+    <div class="section-title" style="margin-top:16px;">Trip Expenses</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:8px;">Log charges as you go — for credit card reconciliation after the trip.</p>
+    <div class="expense-input-row">
+      <input type="text" id="exp-desc" placeholder="Description (e.g. Wands ×2)" />
+      <div class="expense-amount-wrap"><span>$</span><input type="number" id="exp-amt" placeholder="0.00" step="0.01" min="0" /></div>
+      <button class="expense-add-btn" onclick="addExpense()">Add</button>
+    </div>
+    <div id="expense-list"></div>
     <div class="section-title" style="margin-top:14px;">Interactive Wands</div>
     <div class="callout callout-info" style="margin-bottom:6px;">
       <strong>${esc(a.wands.type)}</strong><br>
@@ -1045,6 +1152,8 @@ function renderBookings() {
     <div class="section-title" style="margin-top:14px;">Money-Saving Tips</div>
     <div class="callout callout-success" style="margin-bottom:6px;"><strong>Belt Bag Hack:</strong> ${esc(a.beltBagHack)}</div>
     <div class="callout callout-info">${esc(a.souvenirStrategy)}</div>`;
+
+  renderExpenses();
 }
 
 // ── TIPS TAB ──────────────────────────────────────────────
@@ -1091,12 +1200,67 @@ function renderActionItems() {
     </ul>`;
 }
 
+function toggleDayItem(date, i) {
+  const done = JSON.parse(localStorage.getItem('ot-day-done') || '{}');
+  const key = date + '-' + i;
+  done[key] = !done[key];
+  localStorage.setItem('ot-day-done', JSON.stringify(done));
+  const items = document.querySelectorAll(`#tab-days .schedule-list li`);
+  // find the specific li by re-rendering just its class
+  renderDays();
+}
+
 function toggleCheck(id, checked) {
   const saved = JSON.parse(localStorage.getItem('ot-checklist') || '{}');
   saved[id] = checked;
   localStorage.setItem('ot-checklist', JSON.stringify(saved));
   const li = document.getElementById(id).closest('li');
   li.classList.toggle('done', checked);
+}
+
+// ── EXPENSE TRACKER ───────────────────────────────────────
+function renderExpenses() {
+  const list = document.getElementById('expense-list');
+  if (!list) return;
+  const expenses = JSON.parse(localStorage.getItem('ot-expenses') || '[]');
+  const total = expenses.reduce((s, e) => s + e.amount, 0);
+  if (expenses.length === 0) {
+    list.innerHTML = `<div style="font-size:13px;color:var(--text2);padding:10px 0;">No expenses logged yet.</div>`;
+    return;
+  }
+  list.innerHTML = `
+    <div class="card" style="margin-bottom:8px;">
+      ${expenses.map(e => `
+        <div class="expense-item">
+          <span class="expense-item-desc">${esc(e.desc)}</span>
+          <span class="expense-item-amt">$${e.amount.toFixed(2)}</span>
+          <button class="expense-del-btn" onclick="deleteExpense('${e.id}')" title="Remove">✕</button>
+        </div>`).join('')}
+      <div style="padding:10px 0 2px;border-top:2px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:13px;color:var(--text2);font-weight:600;">Total charged</span>
+        <span class="expense-total">$${total.toFixed(2)}</span>
+      </div>
+    </div>`;
+}
+
+function addExpense() {
+  const descEl = document.getElementById('exp-desc');
+  const amtEl = document.getElementById('exp-amt');
+  const desc = descEl.value.trim();
+  const amount = parseFloat(amtEl.value);
+  if (!desc || isNaN(amount) || amount <= 0) { showToast('Enter a description and amount'); return; }
+  const expenses = JSON.parse(localStorage.getItem('ot-expenses') || '[]');
+  expenses.push({ id: String(Date.now()), desc, amount });
+  localStorage.setItem('ot-expenses', JSON.stringify(expenses));
+  descEl.value = '';
+  amtEl.value = '';
+  renderExpenses();
+}
+
+function deleteExpense(id) {
+  const expenses = JSON.parse(localStorage.getItem('ot-expenses') || '[]');
+  localStorage.setItem('ot-expenses', JSON.stringify(expenses.filter(e => e.id !== id)));
+  renderExpenses();
 }
 
 // ── INIT ──────────────────────────────────────────────────
