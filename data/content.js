@@ -474,4 +474,336 @@ window.TRIP_DATA = {
     ]
   }
 
+  plantBased: {
+    intro: "Park-by-park vegan and vegetarian options for Jennifer. 🌿 = Vegan (no animal products). 🥗 = Vegetarian (contains dairy or eggs). ⭐ = standout pick. When in doubt, ask to speak with a chef — Universal kitchens are very accommodating.",
+    tips: [
+      "Epic Universe has the most extensive plant-based menu — menus use a double-leaf icon for vegan, single-leaf for vegetarian",
+      "Mobile ordering: flag an allergy in the app and a chef will come to you. If an item can't be made vegan, you get a refund.",
+      "Butterbeer is vegan at both Hogsmeade (cold/frozen, skip the foam) and Diagon Alley (cold/frozen, Leaky Cauldron has vegan foam). Hot Butterbeer is NOT vegan.",
+      "Leaky Cauldron (USF, Sunday) is the ONLY location offering vegan foam topping on Butterbeer",
+      "Pumpkin Juice is fully vegan and delicious — try it in both Wizarding World areas",
+      "Mythos (Saturday dinner) is a highlight — the Souvlaki Couscous Bowl and Spanakopita Dip are genuinely excellent",
+      "Epic Universe menus label vegan with a double-leaf icon and vegetarian with a single-leaf icon",
+      "Ask to speak with a chef (not a general team member) for modifications — they can often make things work that aren't on the menu"
+    ],
+    byPark: [
+      {
+        day: "Friday — Epic Universe",
+        dayEmoji: "🎮",
+        areas: [
+          {
+            name: "Celestial Park",
+            venues: [
+              { name: "Pizza Moon", items: [
+                { name: "Harvest Moon Pizza", type: "vegan", notes: "tomato sauce, grilled artichokes, Divina tomatoes, roasted peppers, Castelvetrano olives, arugula" },
+                { name: "The Giant Mushroom Pizza", type: "veg", notes: "roasted garlic béchamel, wild mushrooms, truffle aioli, parsley" },
+                { name: "The Nanarossa (Margherita)", type: "veg", notes: "fresh mozzarella, heirloom tomatoes, basil" },
+                { name: "Pink Moon alla Vodka", type: "veg", notes: "cheese-stuffed Triangoletti pasta, spicy tomato cream sauce" },
+                { name: "Moon Cheese Caesar Salad", type: "veg" },
+                { name: "Lunar Phase Cake", type: "veg", notes: "Meyer lemon olive oil cake, limoncello, blackberries — dessert" }
+              ]},
+              { name: "Meteor Astropub", items: [
+                { name: "Vegan Sausage and Peppers", type: "vegan", notes: "plant-based sausage, pepperonata, basil aioli, arugula on toasted roll" },
+                { name: "Wasabi pub fries / regular pub fries / side salad", type: "vegan" },
+                { name: "Grilled Fourmaggio", type: "veg", notes: "four-cheese grilled sandwich with tomato bisque" },
+                { name: "Astronomer's Shortcake Skillet", type: "veg", notes: "strawberry ice cream, warm biscuit — dessert" }
+              ]},
+              { name: "Oak & Star Tavern", items: [
+                { name: "Ancient Grain Tofu Scramble", type: "vegan", notes: "ancient grains, tomato pepper stew, tofu, arugula — breakfast" },
+                { name: "BBQ Jackfruit Sandwich", type: "vegan", notes: "four-hour-smoked jackfruit, pickled red onions, chimichurri on toasted bun" },
+                { name: "Smoked harissa cauliflower / BBQ crinkle fries / braised greens / tropical coleslaw", type: "vegan", notes: "sides" },
+                { name: "Grilled Peach Arugula Salad", type: "veg" },
+                { name: "Banana Pudding / Warm Sticky Cake", type: "veg", notes: "desserts" }
+              ]},
+              { name: "Comet Dogs", items: [
+                { name: "Smoky Carrot Dog", type: "vegan", notes: "slow-roasted glazed carrot, vegan feta, microgreens, in a purple ube bun", star: true }
+              ]},
+              { name: "Atlantic (dinner reservation 7pm)", items: [
+                { name: "King Oyster Mushroom Ceviche", type: "vegan", notes: "mushrooms, tomato, jicama, lime — starter" },
+                { name: "Various salads", type: "vegan", notes: "ask server about vegan modifications" }
+              ]},
+              { name: "Frosty Moon", items: [
+                { name: "Vegan chocolate chip cookie", type: "vegan" },
+                { name: "Vegan vanilla ice cream", type: "vegan", notes: "with Oreo crumble or birthday sprinkle toppings" }
+              ]}
+            ]
+          },
+          {
+            name: "Super Nintendo World",
+            venues: [
+              { name: "Toadstool Café", items: [
+                { name: "Super Mushroom Soup", type: "vegan", notes: "creamy mushroom soup with 'Super Mushroom' crackers", star: true },
+                { name: "Toadstool Cheesy Garlic Knots", type: "veg", notes: "ask about cheese baked into dough before ordering" }
+              ]},
+              { name: "The Blue Dragon Pan-Asian Restaurant", items: [
+                { name: "Smashed Cucumbers", type: "vegan" },
+                { name: "Cold Noodles", type: "vegan" },
+                { name: "Mapu Tofu", type: "vegan" },
+                { name: "Vegetable Spring Roll", type: "veg", notes: "shared fryer — ask staff if cross-contamination matters" }
+              ]}
+            ]
+          },
+          {
+            name: "Wizarding World — Ministry of Magic",
+            venues: [
+              { name: "Café L'air De La Sirène", notes: "Paris-themed, beautiful indoor seating", items: [
+                { name: "Vegan Croissant", type: "vegan", notes: "available until 10:30am only — lighter and flakier than Hogsmeade version", star: true },
+                { name: "Cassoulet Végétalien aux Haricots Blancs", type: "vegan", notes: "white bean stew, vegan sausage, tempeh bacon, trumpet mushrooms, carrots, tomatoes, baguette croutons" },
+                { name: "Ratatouille Provençale", type: "vegan" },
+                { name: "Baguette, Pomme Frites, salads", type: "vegan" },
+                { name: "Non-Dairy Butterbeer (Bièraubeurre)", type: "vegan", notes: "frozen version available here", star: true },
+                { name: "Pumpkin Juice, Dirigible Plum Juice, Lavender Lemonade, Fraise", type: "vegan" },
+                { name: "Gillywater, Daisyroot Ale, Dragon Scale, Wizard's Brew", type: "vegan", notes: "non-alcoholic" }
+              ]}
+            ],
+            note: "Hot Butterbeer contains dairy even with foam removed — stick to cold or frozen."
+          },
+          {
+            name: "Isle of Berk (How to Train Your Dragon)",
+            venues: [
+              { name: "Mead Hall", items: [
+                { name: "Nordic Harvest Salad", type: "vegan", notes: "kale, arugula, red cabbage, radishes, ancient grains, blueberries, apples, trail mix, raspberry vinaigrette" },
+                { name: "Valka's Vegan Burger", type: "vegan", notes: "ancient grain, mushroom & leek patty, smoked berry aioli, pickled cucumbers", star: true },
+                { name: "Nordic Fries", type: "vegan" }
+              ]},
+              { name: "Spit Fyre Grill", items: [
+                { name: "Valka's Vegan Bowl", type: "vegan", notes: "kale spring mix, bean salad, pineapple salsa, candy beets, vegan feta, mango, mint vinaigrette ($15.99)", star: true }
+              ]}
+            ]
+          },
+          {
+            name: "Dark Universe",
+            venues: [
+              { name: "Das Stakehaus", items: [
+                { name: "Stuffed Cabbage (vegan)", type: "vegan", notes: "Impossible meat, bell pepper tomato sauce, beet bucatini", star: true },
+                { name: "Forager Salad (remove cheese)", type: "vegan" },
+                { name: "French Fries", type: "vegan" }
+              ]},
+              { name: "The Burning Blade Tavern", items: [
+                { name: "Charred Loaded Potato (request vegan mod)", type: "vegan", notes: "both margarine options are vegan; vegan shredded parmesan available" }
+              ]},
+              { name: "Park-Wide", items: [
+                { name: "Popcorn (all stands)", type: "vegan" },
+                { name: "Fruit cups, whole fresh fruit", type: "vegan" }
+              ]}
+            ],
+            note: "Hunter's Garlic Stake (pretzel) and Frank & Friends Pretzel contain dairy even without cheese sauce."
+          }
+        ]
+      },
+      {
+        day: "Saturday — Islands of Adventure",
+        dayEmoji: "⚡",
+        areas: [
+          {
+            name: "Port of Entry",
+            venues: [
+              { name: "Croissant Moon Bakery", items: [
+                { name: "Mediterranean Market Falafel", type: "vegan" },
+                { name: "Vegan Elderberry Croissant", type: "vegan", notes: "can be warmed on request" },
+                { name: "Vegan Double Chocolate Brownie", type: "vegan" },
+                { name: "Fruit Cup / Pineapple Bowl / Watermelon Bowl", type: "vegan" }
+              ]},
+              { name: "Confisco Grille (table service)", items: [
+                { name: "Superfood Salad", type: "vegan" },
+                { name: "Pad Thai (request vegan)", type: "vegan", notes: "rice noodles, mixed veggies, plant-based protein" },
+                { name: "Curry Dosa", type: "vegan" }
+              ]}
+            ]
+          },
+          {
+            name: "Marvel Super Hero Island",
+            venues: [
+              { name: "Café 4", items: [
+                { name: "Vegan Roasted Vegetable Fettuccine", type: "vegan" },
+                { name: "Spaghetti & Marinara (no meatballs)", type: "vegan" },
+                { name: "Garlic Knots (request vegan)", type: "vegan" }
+              ]},
+              { name: "Captain America Diner", items: [
+                { name: "Crispy Garden Vegan Sandwich Platter", type: "vegan" },
+                { name: "French Fries", type: "vegan" }
+              ]}
+            ]
+          },
+          {
+            name: "Toon Lagoon & Jurassic Park",
+            venues: [
+              { name: "Wimpy's", items: [
+                { name: "Crispy Garden Vegan Sandwich", type: "vegan" },
+                { name: "Dole Whip Pineapple Sorbet", type: "vegan" }
+              ]},
+              { name: "Thunder Falls Terrace", items: [
+                { name: "Vegan Chorizo Bowl (remove cheese)", type: "vegan", notes: "rice, black beans, roasted corn & poblanos, sofrito rice" },
+                { name: "Pomegranate Dole Whip", type: "vegan" }
+              ]},
+              { name: "The Burger Digs", items: [
+                { name: "Herbivore Burger Platter", type: "vegan", notes: "balsamic marinated Portobello, smoked tempeh bacon, vegan Swiss, vegan secret sauce on kaiser roll", star: true },
+                { name: "Spring Salad", type: "vegan", notes: "fire-roasted corn, peppers, black beans, pineapple vinaigrette" }
+              ]}
+            ]
+          },
+          {
+            name: "The Lost Continent",
+            venues: [
+              { name: "Doc Sugrue's Desert Kebab House", items: [
+                { name: "Vegan Meatball Kebab", type: "vegan", notes: "chermoula-brushed meatballs on pita, ajvar sauce, caramelized onions, crumbled feta" },
+                { name: "Hummus with carrots, celery, pita", type: "vegan" }
+              ]},
+              { name: "Fire Eater's Grill", items: [
+                { name: "Falafel Gyro (hold the tzatziki)", type: "vegan" }
+              ]}
+            ]
+          },
+          {
+            name: "Wizarding World — Hogsmeade",
+            venues: [
+              { name: "Three Broomsticks", items: [
+                { name: "Mushroom Pie Platter", type: "veg", notes: "mushroom and jackfruit stew with pasty dough topping and side salad" },
+                { name: "Vegan breakfast (request)", type: "vegan", notes: "baked beans, grilled tomato, sautéed mushrooms, breakfast potatoes" },
+                { name: "Baked Potato with baked beans (no butter/sour cream)", type: "vegan" },
+                { name: "Garden Salad with Italian dressing", type: "vegan" }
+              ]},
+              { name: "Hog's Head Pub", items: [
+                { name: "Pumpkin Juice, Tongue Tying Lemon Squash, Daisyroot Ale, Wizard's Brew, Dragon Scale", type: "vegan", notes: "non-alcoholic" }
+              ]}
+            ],
+            note: "Cold and frozen Butterbeer are vegan — SKIP the foam topping (contains dairy). Hot Butterbeer is not vegan."
+          },
+          {
+            name: "Mythos — Dinner Reservation 4:15pm",
+            venues: [
+              { name: "Mythos (full-service)", notes: "The best restaurant in any theme park — very responsive to dietary requests", items: [
+                { name: "Souvlaki Couscous Bowl", type: "veg", notes: "za'atar couscous, cucumbers, artichoke, Kalamata olives, spiced chickpeas, feta, tzatziki, tahini dressing", star: true },
+                { name: "Spinach and Garlic Ravioli", type: "veg", notes: "roasted acorn squash, shiitake mushrooms, rainbow chard, shaved grana Padano" },
+                { name: "Spanakopita Dip", type: "veg", notes: "spinach, feta, lemon, herbs, za'atar pita chips — appetizer", star: true },
+                { name: "Pad Thai (request vegan)", type: "vegan", notes: "request crispy tofu and vegan peanut sauce" }
+              ]}
+            ]
+          },
+          {
+            name: "Park-Wide Snacks",
+            venues: [
+              { name: "All over IOA", items: [
+                { name: "Popcorn", type: "vegan" },
+                { name: "Bavarian Pretzel (plain, no cheese)", type: "vegan", notes: "Kong Mess Tent and The Watering Hole" },
+                { name: "Bavarian Cinnamon Sugar Pretzel (no chocolate dip)", type: "vegan", notes: "Kong Mess Tent" },
+                { name: "Pineapple Dole Whip", type: "vegan" },
+                { name: "Fruit Cups / Fresh Fruit / Fresh Roasted Nuts", type: "vegan" }
+              ]}
+            ]
+          }
+        ]
+      },
+      {
+        day: "Sunday — Universal Studios Florida",
+        dayEmoji: "🎬",
+        areas: [
+          {
+            name: "New York",
+            venues: [
+              { name: "Louie's Italian Restaurant", items: [
+                { name: "Minestrone Soup", type: "vegan" },
+                { name: "Vegan Sausage & Peppers with vegan garlic knot", type: "vegan" },
+                { name: "Spaghetti & Marinara", type: "vegan" },
+                { name: "Vegan Garlic Knots", type: "vegan", notes: "off-menu request — order at counter, 5–10 min wait, not available via app" }
+              ]}
+            ]
+          },
+          {
+            name: "Minion Land & San Francisco",
+            venues: [
+              { name: "Illumination's Minion Café", items: [
+                { name: "Carl's Crispy Cauliflower", type: "vegan" },
+                { name: "El Macho Nacho Hat", type: "vegan" },
+                { name: "Coconut Blue Rice / Mini Banana / Green Banana Chips", type: "vegan" }
+              ]},
+              { name: "Freeze Ray Pops (stand)", items: [
+                { name: "Mango, Strawberry, Coconut, Blueberry Lemonade, Lemon Mint popsicles", type: "vegan" }
+              ]},
+              { name: "San Francisco Pastry Company", items: [
+                { name: "Vegan Elderberry Croissant", type: "vegan" },
+                { name: "Vegan Double Chocolate Brownie", type: "vegan" },
+                { name: "Chilled Tofu Noodle Salad", type: "vegan" }
+              ]}
+            ]
+          },
+          {
+            name: "Wizarding World — Diagon Alley",
+            venues: [
+              { name: "The Leaky Cauldron (dinner option)", items: [
+                { name: "Vegan Curry", type: "vegan", notes: "plant-based chicken and potatoes — the go-to Diagon Alley vegan meal", star: true },
+                { name: "Shepherd's Pasty Pie (vegan)", type: "vegan" },
+                { name: "Chips / Side Garden Salad (Italian dressing)", type: "vegan" },
+                { name: "Butterbeer with vegan foam topping", type: "vegan", notes: "ONLY location currently offering vegan foam — exclusive to Leaky Cauldron", star: true },
+                { name: "Pumpkin Juice, Tongue Tying Lemon Squash, Peachtree Fizzing Tea", type: "vegan" },
+                { name: "Wizard's Brew / Dragon's Scale / Daisyroot Ale / Dark Forest Ale", type: "vegan", notes: "non-alcoholic" }
+              ]},
+              { name: "The Hopping Pot", items: [
+                { name: "Vegan Pasty", type: "vegan" },
+                { name: "Butterbeer & Frozen Butterbeer (no vegan foam here)", type: "vegan", notes: "vegan foam only at Leaky Cauldron, not here" }
+              ]}
+            ],
+            note: "Hot Butterbeer is NOT vegan even with foam removed. Vegan foam only at Leaky Cauldron inside USF."
+          },
+          {
+            name: "Hollywood / Today Cafe",
+            venues: [
+              { name: "TODAY Cafe", items: [
+                { name: "Avocado Toast", type: "vegan", notes: "great breakfast option before park opens", star: true },
+                { name: "Overnight Oats", type: "vegan" },
+                { name: "Vegan Croissant / Vegan Panini (I Heart Vegan)", type: "vegan" }
+              ]}
+            ]
+          },
+          {
+            name: "Park-Wide Snacks",
+            venues: [
+              { name: "All over USF", items: [
+                { name: "Popcorn", type: "vegan" },
+                { name: "Pineapple Dole Whip", type: "vegan" },
+                { name: "Traditional Soft Pretzels (plain, no cheese sauce)", type: "vegan" },
+                { name: "Fruit Cups / Fresh Fruit / Fresh Roasted Nuts", type: "vegan" }
+              ]}
+            ]
+          }
+        ]
+      },
+      {
+        day: "Sunday Dinner — CityWalk",
+        dayEmoji: "🌆",
+        areas: [
+          {
+            name: "CityWalk Restaurants",
+            venues: [
+              { name: "The Cowfish Sushi Burger Bar", items: [
+                { name: "Tokyo Heatwave Beyond Burger", type: "vegan" },
+                { name: "The Tree Hugger Roll (sushi)", type: "vegan" },
+                { name: "Sweet Potato Cold Noodle Salad", type: "vegan" },
+                { name: "Edamame / Seaweed Salad / Grilled Vegetables", type: "vegan" },
+                { name: "Fries (remove seasoning) / Sweet & Spicy Thai Cucumbers", type: "vegan" }
+              ]},
+              { name: "Antojitos Authentic Mexican Food", items: [
+                { name: "Complimentary chips & salsa", type: "vegan" },
+                { name: "Tableside Guacamole (no chicharrones)", type: "vegan" },
+                { name: "Plant Based Barbacoa Tacos", type: "vegan", star: true },
+                { name: "Baja Fresh Salad / House Rice / Roasted Vegetables", type: "vegan" }
+              ]},
+              { name: "Bob Marley — A Tribute to Freedom", items: [
+                { name: "Jerk Cauliflower Bites", type: "vegan" },
+                { name: "Ital Stew", type: "vegan", star: true },
+                { name: "Stuffed Sweet Plantains / Rice and Pigeon Peas / Yucca Fries", type: "vegan" }
+              ]},
+              { name: "Voodoo Doughnut", items: [
+                { name: "Many doughnuts vegan by default", type: "vegan", notes: "Glazed Yeast, Maple Bar, Apple Fritter, Chocolate Ring, ODB, Voodoo Doll and more — confirm with manager" }
+              ]},
+              { name: "VIVO Italian Kitchen", items: [
+                { name: "Minestrone / Pasta Primavera (no butter/cheese) / Lemon Sorbet", type: "vegan" }
+              ]}
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
 };

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orlando-trip-v2';
+const CACHE_NAME = 'orlando-trip-v3';
 
 const PRECACHE_URLS = [
   '/orlando-trip/',

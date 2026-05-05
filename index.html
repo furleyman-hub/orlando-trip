@@ -483,6 +483,7 @@
     <div class="sub-view" id="info-perks"></div>
     <div class="sub-view" id="info-heights"></div>
     <div class="sub-view" id="info-weather"></div>
+    <div class="sub-view" id="info-plants"></div>
   </div>
 
   <!-- ═══════ BOOKINGS TAB ═══════ -->
@@ -723,7 +724,7 @@ function renderDays() {
 
 // ── INFO TAB ──────────────────────────────────────────────
 function renderInfo() {
-  buildSubNav('info', [['family','Family'],['perks','Perks'],['heights','Heights'],['weather','Weather']]);
+  buildSubNav('info', [['family','Family'],['perks','Perks'],['heights','Heights'],['weather','Weather'],['plants','🌿 Plants']]);
 
   // Family
   document.getElementById('info-family').innerHTML = `
@@ -837,6 +838,40 @@ function renderInfo() {
       <summary><strong>General Rain Rules</strong></summary>
       <div class="details-body"><ul class="tip-list">${w.generalRules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
     </details>`;
+
+  // Plant-Based Guide
+  const pb = TRIP_DATA.plantBased;
+  document.getElementById('info-plants').innerHTML = `
+    <div class="callout callout-success" style="margin-bottom:10px;">${esc(pb.intro)}</div>
+    <div class="section-title">Jennifer's Tips</div>
+    <ul class="tip-list">${pb.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
+    ${pb.byPark.map(park=>`
+      <details style="margin-top:8px;">
+        <summary><strong>${park.dayEmoji} ${esc(park.day)}</strong></summary>
+        <div class="details-body">
+          ${park.areas.map(area=>`
+            <div style="margin-bottom:10px;">
+              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin:10px 0 6px;">${esc(area.name)}</div>
+              ${area.note?`<div class="callout callout-warn" style="margin-bottom:6px;font-size:12px;">${esc(area.note)}</div>`:''}
+              ${area.venues.map(venue=>`
+                <div class="card" style="margin-bottom:6px;padding:10px 12px;">
+                  <div style="font-weight:700;font-size:14px;margin-bottom:4px;">${esc(venue.name)}</div>
+                  ${venue.notes?`<div style="font-size:12px;color:var(--text2);margin-bottom:6px;">${esc(venue.notes)}</div>`:''}
+                  ${venue.items.map(item=>`
+                    <div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-top:1px solid var(--border);">
+                      <span style="flex-shrink:0;font-size:15px;">${item.type==='vegan'?'🌿':'🥗'}</span>
+                      <div style="flex:1;font-size:13px;line-height:1.4;">
+                        ${item.star?`<span style="color:var(--gold);font-weight:700;">⭐ ${esc(item.name)}</span>`:`<span>${esc(item.name)}</span>`}
+                        ${item.notes?`<span style="color:var(--text2);"> — ${esc(item.notes)}</span>`:''}
+                      </div>
+                    </div>`).join('')}
+                </div>`).join('')}
+            </div>`).join('')}
+        </div>
+      </details>`).join('')}
+    <div class="callout callout-info" style="margin-top:10px;font-size:13px;">
+      🌿 = Vegan &nbsp;·&nbsp; 🥗 = Vegetarian &nbsp;·&nbsp; ⭐ = Jennifer's Picks
+    </div>`;
 }
 
 // ── BOOKINGS TAB ──────────────────────────────────────────
