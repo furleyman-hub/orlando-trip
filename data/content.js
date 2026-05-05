@@ -472,7 +472,7 @@ window.TRIP_DATA = {
       { id: "ad-5", text: "Book Budget car rental ✅ 37111644US3" },
       { id: "ad-6", text: "Book Hilton Grand Vacations timeshare ✅ RCI 559466785" }
     ]
-  }
+  },
 
   plantBased: {
     intro: "Park-by-park vegan and vegetarian options for Jennifer. 🌿 = Vegan (no animal products). 🥗 = Vegetarian (contains dairy or eggs). ⭐ = standout pick. When in doubt, ask to speak with a chef — Universal kitchens are very accommodating.",
