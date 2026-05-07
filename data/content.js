@@ -480,6 +480,75 @@ window.TRIP_DATA = {
     ]
   },
 
+  packing: {
+    note: "Check off before leaving each morning. Resets automatically each day.",
+    always: [
+      { id: "pk-1", text: "Phones fully charged" },
+      { id: "pk-2", text: "Belt bags packed — one per adult" },
+      { id: "pk-3", text: "Ponchos × 4" },
+      { id: "pk-4", text: "Sunscreen — applied + packed" },
+      { id: "pk-5", text: "Water bottles filled" },
+      { id: "pk-6", text: "Snacks packed" },
+      { id: "pk-7", text: "Park tickets visible in Universal app" },
+      { id: "pk-8", text: "Hats & sunglasses" }
+    ],
+    byPark: {
+      "Epic Universe": [
+        { id: "pk-eu-1", text: "Power-Up Bands — Jasper & Sterling" },
+        { id: "pk-eu-2", text: "Cash/card for wands (~$170 for two, buy inside Ministry of Magic)" }
+      ],
+      "Islands of Adventure": [
+        { id: "pk-ioa-1", text: "Hard Rock room keys (Express Pass active — keep them on you)" },
+        { id: "pk-ioa-2", text: "Wands — for Hogsmeade spell locations" },
+        { id: "pk-ioa-3", text: "Sterling's thick-soled sneakers — Hulk is exactly 54\" min" }
+      ],
+      "USF": [
+        { id: "pk-usf-1", text: "Hard Rock room keys (Express Pass still active until checkout)" },
+        { id: "pk-usf-2", text: "Wands — for Diagon Alley spell locations" },
+        { id: "pk-usf-3", text: "Bags dropped with Hard Rock bell desk before heading to park" }
+      ]
+    }
+  },
+
+  shows: {
+    tip: "Shows are the smartest move during peak crowd hours (11am–2pm). Ride the big ones at rope drop, then duck into a show when waits hit 60+ minutes. Air-conditioned seating is a bonus.",
+    byPark: [
+      {
+        park: "Epic Universe",
+        day: "Friday 5/22",
+        emoji: "🎮",
+        note: "Epic Universe show schedules vary — check the Universal app day-of for times. Each themed land has live entertainment and character appearances throughout the day.",
+        shows: [
+          { name: "Ministry of Magic — Wand Selection Ceremony", duration: "~10 min", tip: "Interactive experience inside the wand shop — worth doing early before crowds build", times: "Ongoing throughout the day" },
+          { name: "Live Entertainment — Celestial Park & Land stages", duration: "Varies", tip: "Each land has scheduled character appearances and street performances. Check Universal app for that day's lineup.", times: "Check Universal app" }
+        ]
+      },
+      {
+        park: "Islands of Adventure",
+        day: "Saturday 5/23",
+        emoji: "🗺️",
+        note: "IOA is primarily a rides park. Shows are limited — use peak hours for the Wizarding World and Marvel areas, which have character meets and ambient entertainment.",
+        shows: [
+          { name: "Poseidon's Fury", duration: "~25 min", tip: "Walk-through show near the Lost Continent — good midday air-conditioned break. Runs continuously.", times: "Continuous — no schedule needed" },
+          { name: "The Eighth Voyage of Sindbad", duration: "~20 min", tip: "Stunt show near Poseidon's Fury. Check Universal app for times — good 11am–2pm option.", times: "Check Universal app" },
+          { name: "Hogsmeade character meets", duration: "Varies", tip: "Characters appear throughout the day near Hogwarts castle. No wait if you catch them during a walkabout.", times: "Ambient — look for crowds" }
+        ]
+      },
+      {
+        park: "USF",
+        day: "Sunday 5/24",
+        emoji: "🎬",
+        note: "USF has the best show lineup of the three parks. Bourne Stuntacular is a must. Check the Universal app for exact times on your visit day — schedules shift seasonally.",
+        shows: [
+          { name: "Bourne Stuntacular", duration: "~25 min", tip: "Best show at USF — live stunt work with massive screen integration. Runs 4–5 times daily. Do NOT skip this.", times: "Check Universal app (runs ~every 90 min)" },
+          { name: "Hollywood Horror Make-Up Show", duration: "~25 min", tip: "Funny and interactive — great for the whole family. Good 11am or 1pm option.", times: "Check Universal app" },
+          { name: "Animal Actors on Location", duration: "~20 min", tip: "Live animal show near the front of the park. Kids enjoy it. Perfect for 12–2pm when rides are slammed.", times: "Check Universal app" },
+          { name: "Blues Brothers Show", duration: "~15 min", tip: "Street performance on Hollywood Blvd — spontaneous, fun. Catch it if you walk by.", times: "Multiple times daily, ambient" }
+        ]
+      }
+    ]
+  },
+
   plantBased: {
     intro: "Park-by-park vegan and vegetarian options for Jennifer. 🌿 = Vegan (no animal products). 🥗 = Vegetarian (contains dairy or eggs). ⭐ = standout pick. When in doubt, ask to speak with a chef — Universal kitchens are very accommodating.",
     tips: [

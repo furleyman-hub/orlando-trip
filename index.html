@@ -643,6 +643,8 @@
     <nav class="sub-nav" id="tips-subnav"></nav>
     <div class="sub-view active" id="tips-tips"></div>
     <div class="sub-view" id="tips-actions"></div>
+    <div class="sub-view" id="tips-pack"></div>
+    <div class="sub-view" id="tips-shows"></div>
     <div class="sub-view" id="tips-notes"></div>
   </div>
 
@@ -1219,7 +1221,7 @@ function renderBookings() {
 
 // ── TIPS TAB ──────────────────────────────────────────────
 function renderTips() {
-  buildSubNav('tips', [['tips','💡 Tips'],['actions','✅ Checklist'],['notes','📝 Notes']]);
+  buildSubNav('tips', [['tips','💡 Tips'],['actions','✅ Checklist'],['pack','🎒 Pack'],['shows','🎭 Shows'],['notes','📝 Notes']]);
 
   // Tips
   document.getElementById('tips-tips').innerHTML =
@@ -1233,6 +1235,12 @@ function renderTips() {
 
   // Action Items
   renderActionItems();
+
+  // Packing
+  renderPacking();
+
+  // Shows
+  renderShows();
 
   // Notes
   renderNotes();
@@ -1339,6 +1347,96 @@ function renderPlantBased() {
 function toggleVeganFilter() {
   veganOnly = !veganOnly;
   renderPlantBased();
+}
+
+// ── PACKING ────────────────────────────────────────────────
+function renderPacking() {
+  const pk = TRIP_DATA.packing;
+  const today = getCurrentDay();
+  const dateKey = today ? today.date : new Date().toISOString().slice(0,10);
+  const saved = JSON.parse(localStorage.getItem('ot-pack-' + dateKey) || '{}');
+
+  const parkItems = today && today.park && pk.byPark[today.park] ? pk.byPark[today.park] : [];
+  const allItems = [...pk.always, ...parkItems];
+  const checked = allItems.filter(i => saved[i.id]).length;
+
+  const parkLabel = today && today.park
+    ? `<div class="callout callout-info" style="margin-bottom:10px;">Today's park: <strong>${esc(today.park)}</strong> — ${parkItems.length > 0 ? parkItems.length + ' extra item' + (parkItems.length > 1 ? 's' : '') + ' added below' : 'no extras today'}</div>`
+    : `<div class="callout callout-info" style="margin-bottom:10px;">Not a park day — showing base checklist</div>`;
+
+  document.getElementById('tips-pack').innerHTML = `
+    <div class="section-title">Before You Leave</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:8px;">${esc(pk.note)}</p>
+    ${parkLabel}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span style="font-size:13px;color:var(--text2);">${checked} / ${allItems.length} packed</span>
+      <button class="notes-clear-btn" onclick="clearPacking('${dateKey}')">Reset</button>
+    </div>
+    <ul class="checklist" id="pack-list">
+      ${allItems.map(item => {
+        const isChecked = !!saved[item.id];
+        const isParkSpecific = parkItems.some(p => p.id === item.id);
+        return `<li class="${isChecked ? 'done' : ''}">
+          <input type="checkbox" class="check-input" id="${item.id}" ${isChecked ? 'checked' : ''} onchange="togglePack('${dateKey}','${item.id}',this.checked)">
+          <label class="check-label" for="${item.id}">${esc(item.text)}${isParkSpecific ? ' <span style="font-size:11px;color:var(--gold);font-weight:700;">★ today</span>' : ''}</label>
+        </li>`;
+      }).join('')}
+    </ul>`;
+}
+
+function togglePack(dateKey, id, checked) {
+  const saved = JSON.parse(localStorage.getItem('ot-pack-' + dateKey) || '{}');
+  saved[id] = checked;
+  localStorage.setItem('ot-pack-' + dateKey, JSON.stringify(saved));
+  const li = document.getElementById(id).closest('li');
+  li.classList.toggle('done', checked);
+  renderPacking();
+}
+
+function clearPacking(dateKey) {
+  localStorage.removeItem('ot-pack-' + dateKey);
+  renderPacking();
+}
+
+// ── SHOWS ───────────────────────────────────────────────────
+function renderShows() {
+  const s = TRIP_DATA.shows;
+  const today = getCurrentDay();
+
+  // Put today's park first if we're on a trip day
+  const parks = [...s.byPark];
+  if (today && today.park) {
+    const idx = parks.findIndex(p => p.park === today.park || p.day.includes(today.park));
+    if (idx > 0) { const [cur] = parks.splice(idx, 1); parks.unshift(cur); }
+  }
+
+  document.getElementById('tips-shows').innerHTML = `
+    <div class="callout callout-info" style="margin-bottom:10px;">${esc(s.tip)}</div>
+    ${parks.map((p, i) => `
+      <details ${i === 0 ? 'open' : ''}>
+        <summary>
+          <div class="label-row">
+            <span style="font-size:18px;">${p.emoji}</span>
+            <div>
+              <div style="font-weight:700;">${esc(p.park)}</div>
+              <div class="day-park">${esc(p.day)}</div>
+            </div>
+            ${today && today.park === p.park ? '<span class="badge badge-ok">TODAY</span>' : ''}
+          </div>
+        </summary>
+        <div class="details-body">
+          ${p.note ? `<div class="callout callout-warn" style="margin-bottom:10px;">${esc(p.note)}</div>` : ''}
+          ${p.shows.map(show => `
+            <div class="card" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
+                <div style="font-weight:700;font-size:15px;">${esc(show.name)}</div>
+                <span class="badge badge-gray" style="white-space:nowrap;">${esc(show.duration)}</span>
+              </div>
+              <div style="font-size:12px;color:var(--gold);margin-bottom:4px;">🕐 ${esc(show.times)}</div>
+              <div style="font-size:13px;color:var(--text2);">${esc(show.tip)}</div>
+            </div>`).join('')}
+        </div>
+      </details>`).join('')}`;
 }
 
 // ── NOTES ──────────────────────────────────────────────────
