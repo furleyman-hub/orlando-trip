@@ -437,10 +437,69 @@
     .day-park { font-size: 12px; color: var(--text2); }
     .row-flex { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
 
-    /* ── SCHEDULE DONE STATE ── */
+    /* ── SCHEDULE DONE / NOW STATE ── */
     .schedule-done { text-decoration: line-through; opacity: 0.4; }
     .schedule-list li { cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
     .schedule-list li:active { background: rgba(255,255,255,0.04); border-radius: 4px; }
+    .schedule-now {
+      background: rgba(230,57,70,0.08);
+      border-radius: 6px;
+      margin: 0 -4px;
+      padding: 0 4px;
+    }
+    .schedule-now .schedule-time { color: var(--accent) !important; }
+    .now-pip {
+      flex-shrink: 0;
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-top: 6px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ── NOTES ── */
+    #notes-area {
+      width: 100%;
+      min-height: 220px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 12px 14px;
+      resize: vertical;
+      outline: none;
+    }
+    #notes-area:focus { border-color: var(--accent); }
+    .notes-meta { font-size: 12px; color: var(--text2); margin-top: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .notes-clear-btn { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text2); font-size: 12px; padding: 3px 10px; cursor: pointer; }
+    .notes-clear-btn:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── PLANT FILTER ── */
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .filter-btn {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn.on { background: rgba(46,204,113,0.2); border-color: var(--green); color: var(--green); }
 
     /* ── EXPENSE TRACKER ── */
     .expense-input-row {
@@ -584,6 +643,7 @@
     <nav class="sub-nav" id="tips-subnav"></nav>
     <div class="sub-view active" id="tips-tips"></div>
     <div class="sub-view" id="tips-actions"></div>
+    <div class="sub-view" id="tips-notes"></div>
   </div>
 
 </main>
@@ -636,6 +696,7 @@
 <script>
 // ── STATE ──────────────────────────────────────────────────
 let currentTab = localStorage.getItem('ot-tab') || 'home';
+let veganOnly = false;
 const subState = {
   info: localStorage.getItem('ot-sub-info') || 'family',
   bookings: localStorage.getItem('ot-sub-bookings') || 'flights',
@@ -677,6 +738,22 @@ function getCurrentDay() {
     const dd = new Date(d.date); dd.setHours(0,0,0,0);
     return dd.getTime() === now.getTime();
   });
+}
+
+function parseScheduleTime(str) {
+  const s = str.replace(/^~/, '').split('–')[0].split('—')[0].trim();
+  const m = s.match(/^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$/i);
+  if (!m) return null;
+  let h = parseInt(m[1]), min = m[2] ? parseInt(m[2]) : 0;
+  const ap = m[3].toLowerCase();
+  if (ap === 'pm' && h !== 12) h += 12;
+  if (ap === 'am' && h === 12) h = 0;
+  return h * 60 + min;
+}
+
+function getNowMinutes() {
+  const n = new Date();
+  return n.getHours() * 60 + n.getMinutes();
 }
 
 function formatDate(iso) {
@@ -781,14 +858,29 @@ function renderDays() {
             ${day.perkNote ? `<div class="callout callout-info" style="margin-bottom:10px;">${esc(day.perkNote)}</div>` : ''}
             ${day.notes ? `<div class="callout callout-warn" style="margin-bottom:10px;">${esc(day.notes)}</div>` : ''}
             <ul class="schedule-list">
-              ${day.schedule.map((s, i) => {
-                const doneKey = day.date + '-' + i;
-                const isDone = !!(dayDone[doneKey]);
-                return `<li class="${isDone ? 'schedule-done' : ''}" onclick="toggleDayItem('${day.date}',${i})">
-                  <span class="schedule-time">${esc(s.time)}</span>
-                  <span>${esc(s.activity)}</span>
-                </li>`;
-              }).join('')}
+              ${(() => {
+                const nowMin = isToday ? getNowMinutes() : -1;
+                const times = day.schedule.map(s => parseScheduleTime(s.time));
+                let nowIdx = -1;
+                if (isToday) {
+                  for (let i = 0; i < times.length; i++) {
+                    if (times[i] !== null && times[i] <= nowMin) nowIdx = i;
+                  }
+                  // Only highlight if the next parseable time is still in the future (not end of day)
+                  const nextParseable = times.slice(nowIdx + 1).find(t => t !== null);
+                  if (nextParseable !== undefined && nextParseable <= nowMin) nowIdx = -1;
+                }
+                return day.schedule.map((s, i) => {
+                  const doneKey = day.date + '-' + i;
+                  const isDone = !!(dayDone[doneKey]);
+                  const isNow = i === nowIdx && !isDone;
+                  return `<li class="${isDone ? 'schedule-done' : isNow ? 'schedule-now' : ''}" onclick="toggleDayItem('${day.date}',${i})">
+                    <span class="schedule-time">${esc(s.time)}</span>
+                    ${isNow ? '<span class="now-pip"></span>' : ''}
+                    <span>${esc(s.activity)}</span>
+                  </li>`;
+                }).join('');
+              })()}
             </ul>
             ${day.mustDos.length ? `
               <div class="must-do-row">
@@ -1072,38 +1164,7 @@ function renderBookings() {
     <ul class="tip-list">${d.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
 
   // Plant-Based Guide
-  const pb = TRIP_DATA.plantBased;
-  document.getElementById('book-plants').innerHTML = `
-    <div class="callout callout-success" style="margin-bottom:10px;">${esc(pb.intro)}</div>
-    <div class="section-title">Jennifer's Tips</div>
-    <ul class="tip-list">${pb.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
-    ${pb.byPark.map(park=>`
-      <details style="margin-top:8px;">
-        <summary><strong>${park.dayEmoji} ${esc(park.day)}</strong></summary>
-        <div class="details-body">
-          ${park.areas.map(area=>`
-            <div style="margin-bottom:10px;">
-              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin:10px 0 6px;">${esc(area.name)}</div>
-              ${area.note?`<div class="callout callout-warn" style="margin-bottom:6px;font-size:12px;">${esc(area.note)}</div>`:''}
-              ${area.venues.map(venue=>`
-                <div class="card" style="margin-bottom:6px;padding:10px 12px;">
-                  <div style="font-weight:700;font-size:14px;margin-bottom:4px;">${esc(venue.name)}</div>
-                  ${venue.notes?`<div style="font-size:12px;color:var(--text2);margin-bottom:6px;">${esc(venue.notes)}</div>`:''}
-                  ${venue.items.map(item=>`
-                    <div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-top:1px solid var(--border);">
-                      <span style="flex-shrink:0;font-size:15px;">${item.type==='vegan'?'🌿':'🥗'}</span>
-                      <div style="flex:1;font-size:13px;line-height:1.4;">
-                        ${item.star?`<span style="color:var(--gold);font-weight:700;">⭐ ${esc(item.name)}</span>`:`<span>${esc(item.name)}</span>`}
-                        ${item.notes?`<span style="color:var(--text2);"> — ${esc(item.notes)}</span>`:''}
-                      </div>
-                    </div>`).join('')}
-                </div>`).join('')}
-            </div>`).join('')}
-        </div>
-      </details>`).join('')}
-    <div class="callout callout-info" style="margin-top:10px;font-size:13px;">
-      🌿 = Vegan &nbsp;·&nbsp; 🥗 = Vegetarian &nbsp;·&nbsp; ⭐ = Jennifer's Picks
-    </div>`;
+  renderPlantBased();
 
   // Costs
   const a = TRIP_DATA.accessories;
@@ -1158,7 +1219,7 @@ function renderBookings() {
 
 // ── TIPS TAB ──────────────────────────────────────────────
 function renderTips() {
-  buildSubNav('tips', [['tips','💡 Tips'],['actions','✅ Checklist']]);
+  buildSubNav('tips', [['tips','💡 Tips'],['actions','✅ Checklist'],['notes','📝 Notes']]);
 
   // Tips
   document.getElementById('tips-tips').innerHTML =
@@ -1172,6 +1233,9 @@ function renderTips() {
 
   // Action Items
   renderActionItems();
+
+  // Notes
+  renderNotes();
 }
 
 function renderActionItems() {
@@ -1216,6 +1280,96 @@ function toggleCheck(id, checked) {
   localStorage.setItem('ot-checklist', JSON.stringify(saved));
   const li = document.getElementById(id).closest('li');
   li.classList.toggle('done', checked);
+}
+
+// ── PLANT-BASED GUIDE ─────────────────────────────────────
+function renderPlantBased() {
+  const pb = TRIP_DATA.plantBased;
+  const el = document.getElementById('book-plants');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="callout callout-success" style="margin-bottom:10px;">${esc(pb.intro)}</div>
+    <div class="filter-toggle">
+      <button class="filter-btn${veganOnly?' on':''}" onclick="toggleVeganFilter()">
+        🌿 Vegan only${veganOnly?' ✓':''}
+      </button>
+      <span style="font-size:12px;color:var(--text2);">${veganOnly?'Showing vegan items only':'Showing all plant-based'}</span>
+    </div>
+    <div class="section-title">Jennifer's Tips</div>
+    <ul class="tip-list">${pb.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
+    ${pb.byPark.map(park=>{
+      const filteredAreas = park.areas.map(area=>{
+        const filteredVenues = area.venues.map(venue=>{
+          const items = veganOnly ? venue.items.filter(i=>i.type==='vegan') : venue.items;
+          return items.length ? {...venue, items} : null;
+        }).filter(Boolean);
+        return filteredVenues.length ? {...area, venues: filteredVenues} : null;
+      }).filter(Boolean);
+      if (!filteredAreas.length) return '';
+      return `
+        <details style="margin-top:8px;">
+          <summary><strong>${park.dayEmoji} ${esc(park.day)}</strong></summary>
+          <div class="details-body">
+            ${filteredAreas.map(area=>`
+              <div style="margin-bottom:10px;">
+                <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin:10px 0 6px;">${esc(area.name)}</div>
+                ${area.note?`<div class="callout callout-warn" style="margin-bottom:6px;font-size:12px;">${esc(area.note)}</div>`:''}
+                ${area.venues.map(venue=>`
+                  <div class="card" style="margin-bottom:6px;padding:10px 12px;">
+                    <div style="font-weight:700;font-size:14px;margin-bottom:4px;">${esc(venue.name)}</div>
+                    ${venue.notes?`<div style="font-size:12px;color:var(--text2);margin-bottom:6px;">${esc(venue.notes)}</div>`:''}
+                    ${venue.items.map(item=>`
+                      <div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-top:1px solid var(--border);">
+                        <span style="flex-shrink:0;font-size:15px;">${item.type==='vegan'?'🌿':'🥗'}</span>
+                        <div style="flex:1;font-size:13px;line-height:1.4;">
+                          ${item.star?`<span style="color:var(--gold);font-weight:700;">⭐ ${esc(item.name)}</span>`:`<span>${esc(item.name)}</span>`}
+                          ${item.notes?`<span style="color:var(--text2);"> — ${esc(item.notes)}</span>`:''}
+                        </div>
+                      </div>`).join('')}
+                  </div>`).join('')}
+              </div>`).join('')}
+          </div>
+        </details>`;
+    }).join('')}
+    <div class="callout callout-info" style="margin-top:10px;font-size:13px;">
+      🌿 = Vegan &nbsp;·&nbsp; 🥗 = Vegetarian &nbsp;·&nbsp; ⭐ = Jennifer's Picks
+    </div>`;
+}
+
+function toggleVeganFilter() {
+  veganOnly = !veganOnly;
+  renderPlantBased();
+}
+
+// ── NOTES ──────────────────────────────────────────────────
+function renderNotes() {
+  const saved = localStorage.getItem('ot-notes') || '';
+  const count = saved.trim().length;
+  document.getElementById('tips-notes').innerHTML = `
+    <div class="section-title">Quick Notes</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:8px;">Jot anything down — locker numbers, parking spot, ride opinions, packing reminders. Saves automatically.</p>
+    <textarea id="notes-area" placeholder="e.g. Parking Level 4 · Locker #23 · Sterling wants Hufflepuff wand…" oninput="saveNotes()">${esc(saved)}</textarea>
+    <div class="notes-meta">
+      <span id="notes-count">${count > 0 ? count + ' characters' : 'Empty'}</span>
+      <button class="notes-clear-btn" onclick="clearNotes()">Clear</button>
+    </div>`;
+}
+
+let _notesSaveTimer;
+function saveNotes() {
+  clearTimeout(_notesSaveTimer);
+  _notesSaveTimer = setTimeout(() => {
+    const val = document.getElementById('notes-area').value;
+    localStorage.setItem('ot-notes', val);
+    const el = document.getElementById('notes-count');
+    if (el) el.textContent = val.trim().length > 0 ? val.trim().length + ' characters' : 'Empty';
+  }, 400);
+}
+
+function clearNotes() {
+  if (!confirm('Clear all notes?')) return;
+  localStorage.removeItem('ot-notes');
+  renderNotes();
 }
 
 // ── EXPENSE TRACKER ───────────────────────────────────────
