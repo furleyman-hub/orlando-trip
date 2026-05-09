@@ -517,6 +517,26 @@
       50% { opacity: 0.3; }
     }
 
+    /* ── WEATHER FORECAST ── */
+    .wx-day-row { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 4px 0 12px; }
+    .wx-day-card { flex: 1; min-width: 58px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 8px 4px; text-align: center; }
+    .wx-day-card.wx-today { border-color: var(--accent); }
+    .wx-emoji { font-size: 22px; line-height: 1; }
+    .wx-day-name { font-size: 11px; font-weight: 700; margin-top: 4px; }
+    .wx-temps { font-size: 12px; margin-top: 2px; }
+    .wx-rain { font-size: 11px; color: var(--text2); margin-top: 2px; }
+    .wx-bars { display: flex; align-items: flex-end; gap: 3px; height: 56px; }
+    .wx-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; }
+    .wx-bar-fill { width: 100%; background: #3498db; border-radius: 3px 3px 0 0; min-height: 3px; }
+    .wx-bar-fill.rain-high { background: var(--accent); }
+    .wx-bar-pct { font-size: 9px; color: var(--text2); }
+    .wx-bar-lbl { font-size: 9px; color: var(--text2); }
+    .wx-hour-title { font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+    .pill-wx { display: block; font-size: 11px; margin-top: 2px; opacity: 0.9; }
+    .wx-fetched { font-size: 11px; color: var(--text2); margin-top: 8px; }
+    details.wx-detail > summary { list-style: none; cursor: pointer; }
+    details.wx-detail > summary::-webkit-details-marker { display: none; }
+
     /* ── NOTES ── */
     #notes-area {
       width: 100%;
@@ -1703,6 +1723,112 @@ function deleteExpense(id) {
   renderExpenses();
 }
 
+// ── WEATHER ───────────────────────────────────────────────
+function wxEmoji(code) {
+  if (code === 0)  return '☀️';
+  if (code <= 2)   return '🌤️';
+  if (code <= 3)   return '⛅';
+  if (code <= 48)  return '🌫️';
+  if (code <= 67)  return '🌧️';
+  if (code <= 77)  return '❄️';
+  if (code <= 82)  return '🌦️';
+  return '⛈️';
+}
+
+const WX_TTL = 3 * 60 * 60 * 1000; // 3 hours
+
+async function fetchWeather() {
+  const cached = JSON.parse(localStorage.getItem('ot-weather') || 'null');
+  if (cached && (Date.now() - cached.ts) < WX_TTL) { applyWeatherToUI(cached); return; }
+
+  const url = 'https://api.open-meteo.com/v1/forecast?latitude=28.4688&longitude=-81.4631' +
+    '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
+    '&hourly=precipitation_probability&temperature_unit=fahrenheit' +
+    '&timezone=America%2FNew_York&start_date=2026-05-21&end_date=2026-05-25';
+  try {
+    const res  = await fetch(url);
+    const json = await res.json();
+    const days = json.daily.time.map((date, i) => ({
+      date,
+      code:    json.daily.weathercode[i],
+      emoji:   wxEmoji(json.daily.weathercode[i]),
+      high:    Math.round(json.daily.temperature_2m_max[i]),
+      low:     Math.round(json.daily.temperature_2m_min[i]),
+      rainPct: json.daily.precipitation_probability_max[i] ?? 0,
+      hourly:  [12,13,14,15,16,17,18,19,20].map(h => ({
+        hour:  h,
+        label: h === 12 ? '12p' : (h - 12) + 'p',
+        rain:  json.hourly.precipitation_probability[i * 24 + h] ?? 0
+      }))
+    }));
+    const data = { ts: Date.now(), days };
+    localStorage.setItem('ot-weather', JSON.stringify(data));
+    applyWeatherToUI(data);
+  } catch(e) { /* fail silently — static tips still visible */ }
+}
+
+function applyWeatherToUI(data) {
+  // 1. Update day pills with emoji + high temp
+  document.querySelectorAll('.day-pill').forEach((pill, i) => {
+    if (!data.days[i]) return;
+    const d = data.days[i];
+    let span = pill.querySelector('.pill-wx');
+    if (!span) { span = document.createElement('span'); span.className = 'pill-wx'; pill.appendChild(span); }
+    span.textContent = d.emoji + ' ' + d.high + '°';
+  });
+
+  // 2. Build and prepend live forecast block in Info → Weather
+  const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+  const fetched   = new Date(data.ts).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+  const dayCards = data.days.map((d, i) => {
+    const isToday = new Date(d.date + 'T00:00:00').setHours(0,0,0,0) === todayDate.getTime();
+    return `<div class="wx-day-card${isToday ? ' wx-today' : ''}">
+      <div class="wx-emoji">${d.emoji}</div>
+      <div class="wx-day-name">${DAY_LABELS[i]}</div>
+      <div class="wx-temps">${d.high}°/${d.low}°</div>
+      <div class="wx-rain">☔${d.rainPct}%</div>
+    </div>`;
+  }).join('');
+
+  const detailCards = data.days.map((d, i) => {
+    const isToday = new Date(d.date + 'T00:00:00').setHours(0,0,0,0) === todayDate.getTime();
+    const bars = d.hourly.map(h => `
+      <div class="wx-bar-col">
+        <span class="wx-bar-pct">${h.rain > 0 ? h.rain + '%' : ''}</span>
+        <div class="wx-bar-fill${h.rain >= 60 ? ' rain-high' : ''}" style="height:${Math.max(3, h.rain * 0.52)}px"></div>
+        <span class="wx-bar-lbl">${h.label}</span>
+      </div>`).join('');
+    return `<details class="wx-detail" style="margin-bottom:6px;">
+      <summary>
+        <div class="wx-day-card${isToday ? ' wx-today' : ''}" style="text-align:left;display:flex;align-items:center;gap:10px;padding:8px 12px;">
+          <span style="font-size:20px;">${d.emoji}</span>
+          <span style="font-weight:700;">${DAY_LABELS[i]} ${DAY_DATES[i]}</span>
+          <span style="color:var(--text2);font-size:13px;">${d.high}°/${d.low}° · ☔${d.rainPct}%</span>
+          <span style="margin-left:auto;color:var(--text2);font-size:12px;">▸ detail</span>
+        </div>
+      </summary>
+      <div style="padding:8px 4px 4px;">
+        <div class="wx-hour-title">Afternoon rain chance (12p – 8p)</div>
+        <div class="wx-bars">${bars}</div>
+      </div>
+    </details>`;
+  }).join('');
+
+  const liveBlock = `<div class="wx-live-block" style="margin-bottom:16px;">
+    <div class="section-title" style="margin-bottom:8px;">📡 Live Forecast — Universal Orlando</div>
+    <div class="wx-day-row">${dayCards}</div>
+    <div class="wx-hour-title" style="font-weight:600;margin:4px 0 8px;">Afternoon rain detail — tap a day to expand</div>
+    ${detailCards}
+    <div class="wx-fetched">Updated ${fetched}</div>
+  </div>`;
+
+  const el = document.getElementById('info-weather');
+  const existing = el.querySelector('.wx-live-block');
+  if (existing) existing.outerHTML = liveBlock;
+  else el.insertAdjacentHTML('afterbegin', liveBlock);
+}
+
 // ── INIT ──────────────────────────────────────────────────
 function init() {
   renderHome();
@@ -1722,6 +1848,9 @@ function init() {
     navigator.serviceWorker.register('/orlando-trip/sw.js', { scope: '/orlando-trip/' })
       .catch(() => {});
   }
+
+  // Fetch live weather forecast (async, updates UI when ready)
+  fetchWeather();
 }
 
 window.addEventListener('DOMContentLoaded', init);
