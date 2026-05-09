@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orlando-trip-v9';
+const CACHE_NAME = 'orlando-trip-v10';
 
 const PRECACHE_URLS = [
   '/orlando-trip/',
@@ -32,6 +32,24 @@ self.addEventListener('fetch', event => {
     event.respondWith(fetch(event.request));
     return;
   }
+
+  // HTML navigation — network-first so app updates are always visible
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match('/orlando-trip/index.html'))
+    );
+    return;
+  }
+
+  // Everything else — cache-first for speed
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
@@ -41,11 +59,7 @@ self.addEventListener('fetch', event => {
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return response;
-      }).catch(() => {
-        if (event.request.mode === 'navigate') {
-          return caches.match('/orlando-trip/index.html');
-        }
-      });
+      }).catch(() => {});
     })
   );
 });

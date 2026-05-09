@@ -1844,9 +1844,17 @@ function init() {
   if (subState.bookings !== 'flights') showSub('bookings', subState.bookings);
   if (subState.tips !== 'tips') showSub('tips', subState.tips);
 
-  // Register service worker
+  // Register service worker — auto-reload page when a new SW activates
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/orlando-trip/sw.js', { scope: '/orlando-trip/' })
+      .then(reg => {
+        reg.addEventListener('updatefound', () => {
+          const sw = reg.installing;
+          sw.addEventListener('statechange', () => {
+            if (sw.state === 'activated') window.location.reload();
+          });
+        });
+      })
       .catch(() => {});
   }
 
