@@ -1737,42 +1737,51 @@ function wxEmoji(code) {
 }
 
 const WX_TTL = 3 * 60 * 60 * 1000; // 3 hours
+const TRIP_DATES = ['2026-05-21','2026-05-22','2026-05-23','2026-05-24','2026-05-25'];
 
 async function fetchWeather() {
   const cached = JSON.parse(localStorage.getItem('ot-weather') || 'null');
   if (cached && (Date.now() - cached.ts) < WX_TTL) { applyWeatherToUI(cached); return; }
 
+  // Note: start_date/end_date cause 400 for future dates; use forecast_days=16 instead
   const url = 'https://api.open-meteo.com/v1/forecast?latitude=28.4688&longitude=-81.4631' +
-    '&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
+    '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
     '&hourly=precipitation_probability&temperature_unit=fahrenheit' +
-    '&timezone=America%2FNew_York&start_date=2026-05-21&end_date=2026-05-25';
+    '&timezone=America%2FNew_York&forecast_days=16';
   try {
     const res  = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
-    const days = json.daily.time.map((date, i) => ({
-      date,
-      code:    json.daily.weathercode[i],
-      emoji:   wxEmoji(json.daily.weathercode[i]),
-      high:    Math.round(json.daily.temperature_2m_max[i]),
-      low:     Math.round(json.daily.temperature_2m_min[i]),
-      rainPct: json.daily.precipitation_probability_max[i] ?? 0,
-      hourly:  [12,13,14,15,16,17,18,19,20].map(h => ({
-        hour:  h,
-        label: h === 12 ? '12p' : (h - 12) + 'p',
-        rain:  json.hourly.precipitation_probability[i * 24 + h] ?? 0
-      }))
-    }));
+    // Map each trip day to its index in the 16-day response (may be null if too far out)
+    const days = TRIP_DATES.map(tripDate => {
+      const i = json.daily.time.indexOf(tripDate);
+      if (i === -1) return null;
+      return {
+        date:    tripDate,
+        code:    json.daily.weather_code[i],
+        emoji:   wxEmoji(json.daily.weather_code[i]),
+        high:    Math.round(json.daily.temperature_2m_max[i]),
+        low:     Math.round(json.daily.temperature_2m_min[i]),
+        rainPct: json.daily.precipitation_probability_max[i] ?? 0,
+        hourly:  [12,13,14,15,16,17,18,19,20].map(h => ({
+          hour:  h,
+          label: h === 12 ? '12p' : (h - 12) + 'p',
+          rain:  json.hourly.precipitation_probability[i * 24 + h] ?? 0
+        }))
+      };
+    });
+    if (days.every(d => d === null)) return; // All dates beyond forecast window
     const data = { ts: Date.now(), days };
     localStorage.setItem('ot-weather', JSON.stringify(data));
     applyWeatherToUI(data);
-  } catch(e) { /* fail silently — static tips still visible */ }
+  } catch(e) { console.warn('Weather fetch failed:', e); }
 }
 
 function applyWeatherToUI(data) {
   // 1. Update day pills with emoji + high temp
   document.querySelectorAll('.day-pill').forEach((pill, i) => {
-    if (!data.days[i]) return;
-    const d = data.days[i];
+    const d = data.days && data.days[i];
+    if (!d) return;
     let span = pill.querySelector('.pill-wx');
     if (!span) { span = document.createElement('span'); span.className = 'pill-wx'; pill.appendChild(span); }
     span.textContent = d.emoji + ' ' + d.high + '°';
@@ -1783,6 +1792,12 @@ function applyWeatherToUI(data) {
   const fetched   = new Date(data.ts).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
   const dayCards = data.days.map((d, i) => {
+    if (!d) return `<div class="wx-day-card" style="opacity:0.4;">
+      <div class="wx-emoji">—</div>
+      <div class="wx-day-name">${DAY_LABELS[i]}</div>
+      <div class="wx-temps" style="font-size:10px;">soon</div>
+      <div class="wx-rain"></div>
+    </div>`;
     const isToday = new Date(d.date + 'T00:00:00').setHours(0,0,0,0) === todayDate.getTime();
     return `<div class="wx-day-card${isToday ? ' wx-today' : ''}">
       <div class="wx-emoji">${d.emoji}</div>
@@ -1793,6 +1808,11 @@ function applyWeatherToUI(data) {
   }).join('');
 
   const detailCards = data.days.map((d, i) => {
+    if (!d) return `<details class="wx-detail" style="margin-bottom:6px;opacity:0.4;">
+      <summary><div class="wx-day-card" style="text-align:left;display:flex;align-items:center;gap:10px;padding:8px 12px;">
+        <span style="font-weight:700;">${DAY_LABELS[i]} ${DAY_DATES[i]}</span>
+        <span style="color:var(--text2);font-size:13px;">Forecast available closer to trip</span>
+      </div></summary></details>`;
     const isToday = new Date(d.date + 'T00:00:00').setHours(0,0,0,0) === todayDate.getTime();
     const bars = d.hourly.map(h => `
       <div class="wx-bar-col">
