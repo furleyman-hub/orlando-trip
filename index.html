@@ -441,6 +441,62 @@
     .schedule-done { text-decoration: line-through; opacity: 0.4; }
     .schedule-list li { cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
     .schedule-list li:active { background: rgba(255,255,255,0.04); border-radius: 4px; }
+
+    /* ── DAY STRIP ── */
+    .day-strip { display: flex; gap: 6px; padding: 8px 0 12px; overflow-x: auto; scrollbar-width: none; }
+    .day-strip::-webkit-scrollbar { display: none; }
+    .day-pill {
+      flex: 1; min-width: 52px;
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text2); font-size: 13px; font-weight: 600;
+      padding: 8px 4px; cursor: pointer; text-align: center; line-height: 1.4;
+      -webkit-tap-highlight-color: transparent; transition: all 0.15s;
+    }
+    .day-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .day-pill.istoday { border-color: var(--accent); }
+
+    /* ── CALENDAR TIMELINE ── */
+    .cal-wrap { position: relative; overflow: hidden; padding-bottom: 20px; }
+    .cal-timeline { position: relative; margin-left: 46px; margin-right: 4px; }
+    .cal-hour-line {
+      position: absolute; left: -46px; right: 0;
+      display: flex; align-items: flex-start; pointer-events: none;
+    }
+    .cal-hour-label {
+      width: 42px; font-size: 11px; color: var(--text2);
+      text-align: right; padding-right: 8px; margin-top: -7px;
+      flex-shrink: 0; letter-spacing: -0.2px;
+    }
+    .cal-hour-tick { flex: 1; border-top: 1px solid var(--border); }
+    .cal-event {
+      position: absolute; left: 6px; right: 0;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 7px 10px 8px;
+      min-height: 44px; border-left-width: 3px;
+    }
+    .cat-travel    { border-left-color: #3498db; }
+    .cat-park      { border-left-color: var(--accent); }
+    .cat-meal      { border-left-color: var(--gold); }
+    .cat-hotel     { border-left-color: #9b59b6; }
+    .cat-break     { border-left-color: var(--green); }
+    .cat-logistics { border-left-color: var(--border); }
+    .cal-event-time   { font-size: 11px; color: var(--gold); font-weight: 600; margin-bottom: 1px; }
+    .cal-event-title  { font-size: 14px; font-weight: 700; line-height: 1.3; }
+    .cal-event-detail { font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.3; }
+    .cal-now-line {
+      position: absolute; left: -46px; right: 0;
+      height: 2px; background: var(--accent); z-index: 10; pointer-events: none;
+    }
+    .cal-now-dot {
+      position: absolute; left: -46px; width: 8px; height: 8px;
+      background: var(--accent); border-radius: 50%; margin-top: -3px;
+    }
+    .cal-day-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 4px 0 12px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
+    }
+    .cal-day-header h2 { font-size: 16px; font-weight: 700; }
+    .cal-day-sub { font-size: 12px; color: var(--text2); }
     .schedule-now {
       background: rgba(230,57,70,0.08);
       border-radius: 6px;
@@ -834,10 +890,142 @@ function renderHome() {
   }
 }
 
-// ── DAYS TAB ──────────────────────────────────────────────
+// ── DAYS TAB (CALENDAR) ───────────────────────────────────
+const HOUR_PX = 80;
+const DAY_LABELS = ['Thu','Fri','Sat','Sun','Mon'];
+const DAY_DATES  = ['5/21','5/22','5/23','5/24','5/25'];
+let calNowTimer = null;
+
 function renderDays() {
-  const today = getCurrentDay();
-  const dayDone = JSON.parse(localStorage.getItem('ot-day-done') || '{}');
+  const days = TRIP_DATA.itinerary.days;
+  const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+  let active = parseInt(localStorage.getItem('ot-cal-day') || '-1');
+  days.forEach((d, i) => {
+    const dd = new Date(d.date + 'T00:00:00'); dd.setHours(0,0,0,0);
+    if (dd.getTime() === todayDate.getTime()) active = i;
+  });
+  if (active < 0) active = 0;
+
+  document.getElementById('days-container').innerHTML = `
+    <div class="day-strip" id="day-strip">
+      ${days.map((d, i) => {
+        const isToday = new Date(d.date+'T00:00:00').setHours(0,0,0,0) === todayDate.getTime();
+        return `<button class="day-pill${i===active?' active':''}${isToday?' istoday':''}" onclick="switchDay(${i})">
+          <span>${DAY_LABELS[i]}</span><br>
+          <span style="font-size:10px;opacity:0.75;">${DAY_DATES[i]}</span>
+        </button>`;
+      }).join('')}
+    </div>
+    <div class="cal-wrap" id="cal-wrap">
+      <div id="cal-day-header" class="cal-day-header"></div>
+      <div class="cal-timeline" id="cal-timeline"></div>
+    </div>`;
+
+  renderTimeline(active);
+  setupCalSwipe();
+}
+
+function switchDay(idx) {
+  localStorage.setItem('ot-cal-day', idx);
+  document.querySelectorAll('.day-pill').forEach((b, i) => b.classList.toggle('active', i === idx));
+  renderTimeline(idx);
+  window.scrollTo(0, 0);
+}
+
+function renderTimeline(idx) {
+  const day    = TRIP_DATA.itinerary.days[idx];
+  const events = (day.anchorEvents || []).slice().sort((a,b) => a.timeMin - b.timeMin);
+
+  // Header
+  const badges = [
+    day.perks.epa          ? '<span class="badge badge-perk">EPA</span>' : '',
+    day.perks.expressPass  ? '<span class="badge badge-perk">Express Pass</span>' : ''
+  ].filter(Boolean).join(' ');
+  document.getElementById('cal-day-header').innerHTML = `
+    <span style="font-size:22px;">${day.parkEmoji}</span>
+    <div style="flex:1;">
+      <h2 style="font-size:16px;font-weight:700;">Day ${day.dayNumber} — ${esc(day.label)}</h2>
+      <div class="cal-day-sub">${formatDate(day.date)}${day.park ? ' · ' + esc(day.park) : ''}</div>
+    </div>
+    ${badges}`;
+
+  if (!events.length) {
+    document.getElementById('cal-timeline').innerHTML = '<div style="padding:20px 0;color:var(--text2);">No events.</div>';
+    return;
+  }
+
+  const startHour = Math.floor(Math.min(...events.map(e => e.timeMin)) / 60);
+  const endHour   = Math.ceil(Math.max(...events.map(e => e.timeMin))  / 60) + 1;
+  const tl = document.getElementById('cal-timeline');
+  tl.style.height = ((endHour - startHour) * HOUR_PX) + 'px';
+
+  let html = '';
+  for (let h = startHour; h <= endHour; h++) {
+    const top = (h - startHour) * HOUR_PX;
+    const lbl = h < 12 ? h+'am' : h === 12 ? '12pm' : (h-12)+'pm';
+    html += `<div class="cal-hour-line" style="top:${top}px;">
+      <span class="cal-hour-label">${lbl}</span><div class="cal-hour-tick"></div></div>`;
+  }
+
+  // Place events, resolve overlaps
+  const MIN_GAP = 54;
+  let prevBottom = -999;
+  events.forEach(e => {
+    let top = Math.round((e.timeMin - startHour * 60) / 60 * HOUR_PX);
+    if (top < prevBottom + 4) top = prevBottom + 4;
+    prevBottom = top + MIN_GAP;
+    const conf = e.confirmed ? ' <span class="badge badge-conf" style="font-size:10px;margin-left:4px;">✅</span>' : '';
+    html += `<div class="cal-event cat-${e.category||'logistics'}" style="top:${top}px;">
+      <div class="cal-event-time">${esc(e.time)}</div>
+      <div class="cal-event-title">${e.emoji} ${esc(e.title)}${conf}</div>
+      ${e.detail ? `<div class="cal-event-detail">${esc(e.detail)}</div>` : ''}
+    </div>`;
+  });
+
+  // Current-time red line — today only
+  const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+  const dayDate   = new Date(day.date+'T00:00:00'); dayDate.setHours(0,0,0,0);
+  if (dayDate.getTime() === todayDate.getTime()) {
+    html += `<div class="cal-now-line" id="cal-now-line" style="top:0px;"></div>
+             <div class="cal-now-dot"  id="cal-now-dot"  style="top:0px;"></div>`;
+    clearInterval(calNowTimer);
+    const drawNow = () => {
+      const n = new Date(), nowMin = n.getHours()*60 + n.getMinutes();
+      const top = Math.round((nowMin - startHour*60) / 60 * HOUR_PX);
+      const el = document.getElementById('cal-now-line');
+      const dot = document.getElementById('cal-now-dot');
+      if (el)  el.style.top  = top + 'px';
+      if (dot) dot.style.top = top + 'px';
+    };
+    tl.innerHTML = html;
+    setTimeout(drawNow, 0);
+    calNowTimer = setInterval(drawNow, 60000);
+    return;
+  }
+
+  tl.innerHTML = html;
+}
+
+function setupCalSwipe() {
+  const wrap = document.getElementById('cal-wrap');
+  if (!wrap || wrap._swipeSet) return;
+  wrap._swipeSet = true;
+  let sx = 0, sy = 0;
+  wrap.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+  wrap.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - sx;
+    const dy = Math.abs(e.changedTouches[0].clientY - sy);
+    if (Math.abs(dx) > 55 && dy < 50) {
+      const cur  = parseInt(localStorage.getItem('ot-cal-day') || '0');
+      const next = dx < 0 ? Math.min(cur+1, 4) : Math.max(cur-1, 0);
+      if (next !== cur) switchDay(next);
+    }
+  }, { passive: true });
+}
+
+// ── DAYS TAB (legacy stub — kept for compat) ──────────────
+function _legacyDaysUnused() {
+  const _dayDone = JSON.parse(localStorage.getItem('ot-day-done') || '{}');
   document.getElementById('days-container').innerHTML =
     TRIP_DATA.itinerary.days.map(day => {
       const isToday = today && today.date === day.date;

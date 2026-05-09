@@ -47,7 +47,13 @@ window.TRIP_DATA = {
         ],
         mustDos: [],
         niceToDos: [],
-        notes: "Grocery run covers all timeshare breakfasts, midday lunches, and Monday morning. Don't skip this stop."
+        notes: "Grocery run covers all timeshare breakfasts, midday lunches, and Monday morning. Don't skip this stop.",
+        anchorEvents: [
+          { time: "4:05pm", timeMin: 965,  emoji: "✈️", category: "travel",    title: "Depart HPN",              detail: "JetBlue 0495 · Row 20 · HPN → MCO" },
+          { time: "6:59pm", timeMin: 1139, emoji: "🛬", category: "travel",    title: "Arrive MCO",              detail: "Pick up Budget rental car" },
+          { time: "~8:00pm",timeMin: 1200, emoji: "🛒", category: "logistics", title: "Grocery run",             detail: "Publix or Walmart en route to timeshare" },
+          { time: "~9:00pm",timeMin: 1260, emoji: "🏨", category: "hotel",     title: "Check in — Hilton SeaWorld", detail: "Timeshare · Thu–Tue stay" }
+        ]
       },
       {
         dayNumber: 2,
@@ -73,7 +79,17 @@ window.TRIP_DATA = {
         ],
         mustDos: ["Battle at the Ministry (rope drop)", "Super Nintendo World / Mario Kart", "Atlantic dinner 7pm"],
         niceToDos: ["Stardust Racers", "Wing Gliders", "Le Cirque Arcanus show", "Dragon Racer's Rally", "Wand spells"],
-        dining: { name: "Atlantic", time: "7:00pm", location: "Celestial Park, Epic Universe", confirmed: true, bookingId: "#639120252710358272" }
+        dining: { name: "Atlantic", time: "7:00pm", location: "Celestial Park, Epic Universe", confirmed: true, bookingId: "#639120252710358272" },
+        anchorEvents: [
+          { time: "6:45am", timeMin: 405,  emoji: "🍳", category: "logistics", title: "Breakfast",               detail: "Cook at timeshare · everyone eats" },
+          { time: "7:15am", timeMin: 435,  emoji: "🚗", category: "logistics", title: "Drive to Epic Universe",  detail: "Queue at turnstiles before open" },
+          { time: "8:00am", timeMin: 480,  emoji: "🎢", category: "park",      title: "Rope Drop",               detail: "Ministry of Magic first · no Express Pass today" },
+          { time: "12:00pm",timeMin: 720,  emoji: "🏠", category: "break",     title: "Midday Retreat",          detail: "Timeshare · lunch + pool + rest" },
+          { time: "2:30pm", timeMin: 870,  emoji: "🎮", category: "park",      title: "Return to Epic",          detail: "Nintendo World · Mario Kart → DK area" },
+          { time: "4:30pm", timeMin: 990,  emoji: "🪄", category: "park",      title: "Wand Buying",             detail: "Ministry of Magic · ~$85 each" },
+          { time: "7:00pm", timeMin: 1140, emoji: "🍽️", category: "meal",      title: "Atlantic Restaurant",     detail: "Celestial Park · Booking #639120252710358272", confirmed: true },
+          { time: "9:30pm", timeMin: 1290, emoji: "🚗", category: "logistics", title: "Drive back to timeshare", detail: "" }
+        ]
       },
       {
         dayNumber: 3,
@@ -96,7 +112,17 @@ window.TRIP_DATA = {
         ],
         mustDos: ["Hagrid's (EPA, rope drop)", "VelociCoaster", "Hogsmeade / Forbidden Journey"],
         niceToDos: ["Hulk", "Dr. Doom's", "Flight of the Hippogriff", "Water rides", "Spider-Man", "Kong"],
-        dining: { name: "Mythos", time: "4:15pm", location: "Islands of Adventure", confirmed: true, bookingId: "#639120237617647104" }
+        dining: { name: "Mythos", time: "4:15pm", location: "Islands of Adventure", confirmed: true, bookingId: "#639120237617647104" },
+        anchorEvents: [
+          { time: "7:00am", timeMin: 420,  emoji: "🍳", category: "logistics", title: "Breakfast",               detail: "Timeshare · pack bags for Hard Rock" },
+          { time: "7:45am", timeMin: 465,  emoji: "🏨", category: "hotel",     title: "Hard Rock bag drop",      detail: "Get room keys → Express Pass activated" },
+          { time: "8:00am", timeMin: 480,  emoji: "⚡", category: "park",      title: "Rope Drop — IOA",         detail: "Hagrid's Magical Creatures first · EPA" },
+          { time: "12:00pm",timeMin: 720,  emoji: "🏊", category: "break",     title: "Midday Break",            detail: "Hard Rock · room + pool + lunch" },
+          { time: "2:30pm", timeMin: 870,  emoji: "⚡", category: "park",      title: "Return to IOA",           detail: "Hogsmeade · Forbidden Journey · Butterbeer" },
+          { time: "4:15pm", timeMin: 975,  emoji: "🍽️", category: "meal",      title: "Mythos Restaurant",       detail: "Islands of Adventure · Booking #639120237617647104", confirmed: true },
+          { time: "6:30pm", timeMin: 1110, emoji: "💦", category: "park",      title: "Water Rides",             detail: "Dudley Do-Right · Bilge-Rat · Jurassic River" },
+          { time: "8:30pm", timeMin: 1230, emoji: "🏨", category: "hotel",     title: "Hard Rock Hotel",         detail: "Check in for the night" }
+        ]
       },
       {
         dayNumber: 4,
@@ -119,7 +145,16 @@ window.TRIP_DATA = {
         ],
         mustDos: ["Gringotts (EPA, rope drop)", "Hogwarts Express (both directions)", "Revenge of the Mummy"],
         niceToDos: ["Villain-Con Minion Blast", "Transformers", "Simpsons Ride", "Diagon Alley wand spells"],
-        dining: { name: "Leaky Cauldron or Jasper's pick (Cowfish / Antojitos)", time: "~5:30pm", location: "Diagon Alley or CityWalk", confirmed: false }
+        dining: { name: "Leaky Cauldron or Jasper's pick (Cowfish / Antojitos)", time: "~5:30pm", location: "Diagon Alley or CityWalk", confirmed: false },
+        anchorEvents: [
+          { time: "7:30am", timeMin: 450,  emoji: "🍳", category: "logistics", title: "Breakfast",               detail: "Hard Rock Hotel" },
+          { time: "8:00am", timeMin: 480,  emoji: "🏨", category: "hotel",     title: "Check out Hard Rock",     detail: "Bags with bell desk · Express Pass stays active" },
+          { time: "8:15am", timeMin: 495,  emoji: "🎬", category: "park",      title: "Rope Drop — USF",         detail: "Gringotts first (Diagon Alley) · EPA" },
+          { time: "12:00pm",timeMin: 720,  emoji: "🍔", category: "break",     title: "Midday — CityWalk",       detail: "Lunch + rest · leave park" },
+          { time: "2:30pm", timeMin: 870,  emoji: "🎬", category: "park",      title: "Return to USF",           detail: "Hogwarts Express · both directions" },
+          { time: "~5:30pm",timeMin: 1050, emoji: "🍽️", category: "meal",      title: "Dinner — CityWalk",       detail: "Cowfish or Antojitos · decide before trip" },
+          { time: "8:30pm", timeMin: 1230, emoji: "🚗", category: "logistics", title: "Drive to timeshare",      detail: "Collect bags from Hard Rock bell desk first" }
+        ]
       },
       {
         dayNumber: 5,
@@ -137,7 +172,15 @@ window.TRIP_DATA = {
         ],
         mustDos: [],
         niceToDos: [],
-        notes: "⚠️ MCO has two separate terminals — confirm which one JetBlue uses before driving in. Timeshare checkout is Tue 5/26 — no Monday morning rush."
+        notes: "⚠️ MCO has two separate terminals — confirm which one JetBlue uses before driving in. Timeshare checkout is Tue 5/26 — no Monday morning rush.",
+        anchorEvents: [
+          { time: "8:00am", timeMin: 480, emoji: "🍳", category: "logistics", title: "Breakfast",            detail: "Timeshare · remaining groceries" },
+          { time: "9:00am", timeMin: 540, emoji: "🚗", category: "logistics", title: "Depart timeshare",     detail: "Leave by 9:00am for MCO" },
+          { time: "~10:00am",timeMin: 600,emoji: "🚗", category: "travel",    title: "Return rental car",    detail: "Budget · MCO" },
+          { time: "~10:15am",timeMin: 615,emoji: "✈️", category: "travel",    title: "Enter MCO",            detail: "Clear security · 2.5hrs before departure" },
+          { time: "12:05pm", timeMin: 725,emoji: "✈️", category: "travel",    title: "Depart MCO",           detail: "JetBlue 0194 · Row 21 · MCO → HPN" },
+          { time: "2:57pm",  timeMin: 897,emoji: "🛬", category: "travel",    title: "Arrive HPN",           detail: "Home! 🎉" }
+        ]
       }
     ]
   },
