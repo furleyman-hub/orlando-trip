@@ -979,6 +979,20 @@ window.TRIP_DATA = {
         ]
       }
     ]
-  }
+  },
+
+  firebaseUrl: 'https://orlando-app-afbe7-default-rtdb.firebaseio.com',
+
+  prepChecklist: [
+    { id: 'pt-1', text: 'Buy 4 ponchos before leaving home' },
+    { id: 'pt-2', text: 'Buy sunscreen (apply before parks each day)' },
+    { id: 'pt-3', text: 'Stock timeshare groceries — Publix or Walmart on arrival night' },
+    { id: 'pt-4', text: 'Confirm Power-Up Bands received before packing' },
+    { id: 'pt-5', text: 'Pack wand holsters (×2)' },
+    { id: 'pt-6', text: 'Pack collapsible water bottles (×4)' },
+    { id: 'pt-7', text: 'Link park tickets in Universal app on both phones' },
+    { id: 'pt-8', text: 'Measure Sterling — confirm he clears 54\" for Hulk (thick soles mandatory)' },
+    { id: 'pt-9', text: 'Charge all portable batteries the night before departure' }
+  ]
 
 };

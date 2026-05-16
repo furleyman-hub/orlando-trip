@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orlando-trip-v12';
+const CACHE_NAME = 'orlando-trip-v13';
 
 const PRECACHE_URLS = [
   '/orlando-trip/',
@@ -30,6 +30,12 @@ self.addEventListener('fetch', event => {
   // Weather API — always fetch from network, never cache
   if (event.request.url.includes('open-meteo.com')) {
     event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // Firebase — always fetch from network, never cache
+  if (event.request.url.includes('firebaseio.com')) {
+    event.respondWith(fetch(event.request).catch(() => new Response('null')));
     return;
   }
 

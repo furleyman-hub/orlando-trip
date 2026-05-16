@@ -719,6 +719,7 @@
   <div class="tab-view" id="tab-tips">
     <nav class="sub-nav" id="tips-subnav"></nav>
     <div class="sub-view active" id="tips-tips"></div>
+    <div class="sub-view" id="tips-prep"></div>
     <div class="sub-view" id="tips-actions"></div>
     <div class="sub-view" id="tips-pack"></div>
     <div class="sub-view" id="tips-shows"></div>
@@ -779,7 +780,7 @@ let veganOnly = false;
 const subState = {
   info: localStorage.getItem('ot-sub-info') || 'family',
   bookings: localStorage.getItem('ot-sub-bookings') || 'flights',
-  tips: localStorage.getItem('ot-sub-tips') || 'tips'
+  tips: localStorage.getItem('ot-sub-tips') || 'prep'
 };
 
 // ── UTILS ──────────────────────────────────────────────────
@@ -1440,7 +1441,7 @@ function renderBookings() {
 
 // ── TIPS TAB ──────────────────────────────────────────────
 function renderTips() {
-  buildSubNav('tips', [['tips','💡 Tips'],['actions','✅ Checklist'],['pack','🎒 Pack'],['shows','🎭 Shows'],['notes','📝 Notes']]);
+  buildSubNav('tips', [['prep','📋 Prep'],['tips','💡 Tips'],['actions','✅ Checklist'],['pack','🎒 Pack'],['shows','🎭 Shows'],['notes','📝 Notes']]);
 
   // Tips
   document.getElementById('tips-tips').innerHTML =
@@ -1451,6 +1452,9 @@ function renderTips() {
           <ul class="tip-list">${cat.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>
         </div>
       </details>`).join('');
+
+  // Pre-trip prep checklist (initial render from cache; fetchPrepChecklist refreshes from Firebase)
+  renderPrepChecklist();
 
   // Action Items
   renderActionItems();
@@ -1734,6 +1738,93 @@ function deleteExpense(id) {
   renderExpenses();
 }
 
+// ── PRE-TRIP PREP CHECKLIST ───────────────────────────────
+const PREP_KEY = 'ot-prep';
+const PREP_URL = () => (TRIP_DATA.firebaseUrl || '') + '/prep.json';
+
+async function fetchPrepChecklist() {
+  if (!TRIP_DATA.firebaseUrl) { renderPrepChecklist(); return; }
+  try {
+    const res = await fetch(PREP_URL());
+    const data = await res.json();
+    if (!data) {
+      const seed = TRIP_DATA.prepChecklist.map(i => ({ id: i.id, text: i.text, done: false }));
+      await fetch(PREP_URL(), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(seed) });
+      localStorage.setItem(PREP_KEY, JSON.stringify(seed));
+    } else {
+      localStorage.setItem(PREP_KEY, JSON.stringify(data));
+    }
+  } catch(e) { /* offline — use localStorage cache */ }
+  renderPrepChecklist();
+}
+
+function renderPrepChecklist() {
+  const el = document.getElementById('tips-prep');
+  if (!el) return;
+  const items = JSON.parse(localStorage.getItem(PREP_KEY) || '[]');
+  const doneCount = items.filter(i => i.done).length;
+  el.innerHTML = `
+    <div class="section-title">Pre-Trip Checklist</div>
+    <div id="prep-count" style="font-size:13px;color:var(--gold);margin-bottom:12px;">${doneCount} of ${items.length} done</div>
+    <div class="card" style="display:flex;gap:8px;margin-bottom:16px;padding:10px;">
+      <input id="prep-input" type="text" placeholder="Add an item…"
+        style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text);font-size:14px;"
+        onkeydown="if(event.key==='Enter')addPrepItem()">
+      <button onclick="addPrepItem()"
+        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 14px;font-size:14px;cursor:pointer;font-weight:600;">Add</button>
+    </div>
+    ${items.length === 0
+      ? '<div style="font-size:13px;color:var(--text2);padding:10px 0;">No items yet — add something above.</div>'
+      : `<ul class="checklist">
+          ${items.map(item => `
+            <li class="${item.done ? 'done' : ''}" id="prep-li-${item.id}">
+              <input type="checkbox" class="check-input" id="prep-cb-${item.id}"
+                ${item.done ? 'checked' : ''}
+                onchange="togglePrepItem('${item.id}', this.checked)">
+              <label class="check-label" for="prep-cb-${item.id}" style="flex:1;">${esc(item.text)}</label>
+              <button onclick="deletePrepItem('${item.id}')"
+                style="background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer;padding:0 4px;line-height:1;" title="Remove">✕</button>
+            </li>`).join('')}
+        </ul>`}`;
+}
+
+async function savePrepToFirebase(items) {
+  if (!TRIP_DATA.firebaseUrl) return;
+  fetch(PREP_URL(), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(items) })
+    .catch(() => {});
+}
+
+async function addPrepItem() {
+  const input = document.getElementById('prep-input');
+  const text = (input && input.value.trim()) || '';
+  if (!text) { showToast('Enter an item first'); return; }
+  const items = JSON.parse(localStorage.getItem(PREP_KEY) || '[]');
+  items.push({ id: String(Date.now()), text, done: false });
+  localStorage.setItem(PREP_KEY, JSON.stringify(items));
+  savePrepToFirebase(items);
+  renderPrepChecklist();
+  setTimeout(() => { const el = document.getElementById('prep-input'); if (el) el.focus(); }, 50);
+}
+
+function togglePrepItem(id, done) {
+  const items = JSON.parse(localStorage.getItem(PREP_KEY) || '[]');
+  const item = items.find(i => i.id === id);
+  if (item) item.done = done;
+  localStorage.setItem(PREP_KEY, JSON.stringify(items));
+  savePrepToFirebase(items);
+  const li = document.getElementById('prep-li-' + id);
+  if (li) li.classList.toggle('done', done);
+  const countEl = document.getElementById('prep-count');
+  if (countEl) countEl.textContent = items.filter(i => i.done).length + ' of ' + items.length + ' done';
+}
+
+function deletePrepItem(id) {
+  const items = JSON.parse(localStorage.getItem(PREP_KEY) || '[]').filter(i => i.id !== id);
+  localStorage.setItem(PREP_KEY, JSON.stringify(items));
+  savePrepToFirebase(items);
+  renderPrepChecklist();
+}
+
 // ── WEATHER ───────────────────────────────────────────────
 function wxEmoji(code) {
   if (code === 0)  return '☀️';
@@ -1887,6 +1978,9 @@ function init() {
       })
       .catch(() => {});
   }
+
+  // Fetch prep checklist from Firebase (async, updates UI when ready)
+  fetchPrepChecklist();
 
   // Fetch live weather forecast (async, updates UI when ready)
   fetchWeather();
