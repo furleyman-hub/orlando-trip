@@ -1453,9 +1453,6 @@ function renderTips() {
         </div>
       </details>`).join('');
 
-  // Pre-trip prep checklist (initial render from cache; fetchPrepChecklist refreshes from Firebase)
-  renderPrepChecklist();
-
   // Action Items
   renderActionItems();
 
@@ -1958,12 +1955,13 @@ function init() {
   renderInfo();
   renderBookings();
   renderTips();
+  try { renderPrepChecklist(); } catch(e) { console.warn('Prep checklist error:', e); }
 
   // Restore last-used tab and sub-tabs
   showTab(currentTab);
   if (subState.info !== 'family') showSub('info', subState.info);
   if (subState.bookings !== 'flights') showSub('bookings', subState.bookings);
-  if (subState.tips !== 'tips') showSub('tips', subState.tips);
+  showSub('tips', subState.tips);
 
   // Register service worker — auto-reload page when a new SW activates
   if ('serviceWorker' in navigator) {
