@@ -26,7 +26,16 @@ window.TRIP_DATA = {
       "Resist over-scheduling. Everything beyond the anchors is a bonus.",
       "Memorial Day weekend (Sat–Sun) means peak crowds — midday retreat is not optional those days",
       "Jennifer's app monitoring replaces rigid scheduling with real-time decision-making"
-    ]
+    ],
+    tshirts: {
+      description: "Custom performance fabric tees — one per person, each a different Harry Potter house color. Jasper's idea.",
+      assignments: [
+        { person: "Julian",   house: "Hufflepuff", color: "Yellow" },
+        { person: "Jennifer", house: "Ravenclaw",  color: "Blue" },
+        { person: "Jasper",   house: "Gryffindor", color: "Red" },
+        { person: "Sterling", house: "Slytherin",  color: "Green" }
+      ]
+    }
   },
 
   itinerary: {
@@ -39,6 +48,7 @@ window.TRIP_DATA = {
         parkEmoji: "✈️",
         perks: { epa: false, expressPass: false },
         schedule: [
+          { time: "2:15pm", activity: "Uber leaves the house" },
           { time: "4:05pm", activity: "Depart HPN (JetBlue Flight 0495)" },
           { time: "6:59pm", activity: "Arrive MCO. Pick up Budget rental car (conf. 37111644US3)." },
           { time: "Evening", activity: "Stop at Publix or Walmart en route — stock groceries for the full stay." },
@@ -49,6 +59,7 @@ window.TRIP_DATA = {
         niceToDos: [],
         notes: "Grocery run covers all timeshare breakfasts, midday lunches, and Monday morning. Don't skip this stop.",
         anchorEvents: [
+          { time: "2:15pm", timeMin: 855,  emoji: "🚗", category: "travel",    title: "Uber to airport",         detail: "Leave from home → HPN" },
           { time: "4:05pm", timeMin: 965,  emoji: "✈️", category: "travel",    title: "Depart HPN",              detail: "JetBlue 0495 · Row 20 · HPN → MCO" },
           { time: "6:59pm", timeMin: 1139, emoji: "🛬", category: "travel",    title: "Arrive MCO",              detail: "Pick up Budget rental car" },
           { time: "~8:00pm",timeMin: 1200, emoji: "🛒", category: "logistics", title: "Grocery run",             detail: "Publix or Walmart en route to timeshare" },
@@ -104,10 +115,12 @@ window.TRIP_DATA = {
           { time: "7:45am", activity: "Arrive Hard Rock. Drop bags with bell desk. Get room keys (= Express Pass activated)." },
           { time: "8:00am", activity: "IOA turnstiles for EPA. Straight to Hagrid's Magical Creatures Motorbike Adventure (no Express Pass — early is the only way)" },
           { time: "Morning", activity: "Kong → Spider-Man → Dr. Doom's Fearfall → VelociCoaster → Incredible Hulk (all Express Pass)" },
-          { time: "12:00pm", activity: "Leave IOA. Walk to Hard Rock. Check into room / pool / lunch." },
-          { time: "2:30pm", activity: "Return to IOA — Hogsmeade: Forbidden Journey · Flight of the Hippogriff · wands · Butterbeer" },
+          { time: "12:00pm", activity: "Leave IOA. Walk to CityWalk Cinemark." },
+          { time: "12:10pm", activity: "🎬 Star Wars: The Mandalorian & Grogu · Confirmation #10172333652488 · ~2h 12m" },
+          { time: "~2:25pm", activity: "Movie ends. Walk to Hard Rock. Check into room / freshen up." },
+          { time: "2:45pm", activity: "Return to IOA — Hogsmeade: Forbidden Journey · Flight of the Hippogriff · wands · Butterbeer" },
           { time: "4:15pm", activity: "Dinner at Mythos · Booking #639120237617647104 ✅" },
-          { time: "6:30pm", activity: "Water rides: Dudley Do-Right → Bilge-Rat Barges → Jurassic River Adventure (bring dry bag)" },
+          { time: "6:00pm", activity: "Water rides: Dudley Do-Right → Bilge-Rat Barges → Jurassic River Adventure (bring dry bag)" },
           { time: "8:30pm", activity: "Walk back to Hard Rock" }
         ],
         mustDos: ["Hagrid's (EPA, rope drop)", "VelociCoaster", "Hogsmeade / Forbidden Journey"],
@@ -117,10 +130,12 @@ window.TRIP_DATA = {
           { time: "7:00am", timeMin: 420,  emoji: "🍳", category: "logistics", title: "Breakfast",               detail: "Timeshare · pack bags for Hard Rock" },
           { time: "7:45am", timeMin: 465,  emoji: "🏨", category: "hotel",     title: "Hard Rock bag drop",      detail: "Get room keys → Express Pass activated" },
           { time: "8:00am", timeMin: 480,  emoji: "⚡", category: "park",      title: "Rope Drop — IOA",         detail: "Hagrid's Magical Creatures first · EPA" },
-          { time: "12:00pm",timeMin: 720,  emoji: "🏊", category: "break",     title: "Midday Break",            detail: "Hard Rock · room + pool + lunch" },
-          { time: "2:30pm", timeMin: 870,  emoji: "⚡", category: "park",      title: "Return to IOA",           detail: "Hogsmeade · Forbidden Journey · Butterbeer" },
+          { time: "12:00pm",timeMin: 720,  emoji: "🚶", category: "logistics", title: "Walk to CityWalk",        detail: "CityWalk Cinemark for 12:10pm showing" },
+          { time: "12:10pm",timeMin: 730,  emoji: "🎬", category: "break",     title: "Star Wars Movie",         detail: "The Mandalorian & Grogu · Conf #10172333652488 · ends ~2:25pm" },
+          { time: "~2:30pm",timeMin: 870,  emoji: "🏨", category: "hotel",     title: "Hard Rock check-in",      detail: "Room + freshen up after movie" },
+          { time: "2:45pm", timeMin: 885,  emoji: "⚡", category: "park",      title: "Return to IOA",           detail: "Hogsmeade · Forbidden Journey · Butterbeer" },
           { time: "4:15pm", timeMin: 975,  emoji: "🍽️", category: "meal",      title: "Mythos Restaurant",       detail: "Islands of Adventure · Booking #639120237617647104", confirmed: true },
-          { time: "6:30pm", timeMin: 1110, emoji: "💦", category: "park",      title: "Water Rides",             detail: "Dudley Do-Right · Bilge-Rat · Jurassic River" },
+          { time: "6:00pm", timeMin: 1080, emoji: "💦", category: "park",      title: "Water Rides",             detail: "Dudley Do-Right · Bilge-Rat · Jurassic River" },
           { time: "8:30pm", timeMin: 1230, emoji: "🏨", category: "hotel",     title: "Hard Rock Hotel",         detail: "Check in for the night" }
         ]
       },
@@ -251,6 +266,17 @@ window.TRIP_DATA = {
         "Bags stored with bell desk Sunday after checkout — collect Sunday evening before driving to timeshare"
       ]
     },
+    movie: {
+      confirmation: "#10172333652488",
+      paymentStatus: "paid",
+      name: "Star Wars: The Mandalorian & Grogu",
+      theater: "CityWalk Cinemark, Universal Orlando",
+      date: "Sat 5/23",
+      time: "12:10pm",
+      runtime: "~2h 12m",
+      endsAt: "~2:25pm",
+      notes: ["Fits between IOA morning session and Hard Rock check-in — walk straight from CityWalk to Hard Rock after the film"]
+    },
     tickets: {
       confirmation: null,
       loadedInApp: true,
@@ -271,7 +297,7 @@ window.TRIP_DATA = {
     ],
     planned: [
       { name: "Cowfish or Antojitos (decide before trip)", date: "Sunday 5/24", time: "~5:30pm", location: "CityWalk", note: "No reservation needed — arrive by 5:30pm on Memorial Day weekend. Cowfish: sushi burgers, fun for kids. Antojitos: Mexican, livelier atmosphere." },
-      { name: "Timeshare / grocery meals", date: "Thu–Mon", time: "All breakfasts + midday lunches", location: "Timeshare", note: "Stock at Publix or Walmart Thursday on the way from MCO" }
+      { name: "Timeshare / grocery meals", date: "Thu–Mon", time: "All breakfasts + midday lunches", location: "Timeshare", note: "Stock at Publix or Walmart Thursday on the way from MCO. Budget ~$150–175." }
     ],
     snacks: [
       { park: "Epic Universe (Fri)", items: ["Butterbeer Crêpe — Ministry of Magic, exclusive to Epic", "DK Crush Float — Donkey Kong Country, Nintendo World", "Yoshi's Smoothie — Nintendo World", "Yaknog — Mead Hall, Isle of Berk"] },
@@ -411,27 +437,53 @@ window.TRIP_DATA = {
       whyThen: "Buying Friday gives the family all 3 park days to use them across all Wizarding World locations",
       worksIn: ["Epic Universe (Ministry of Magic)", "IOA (Hogsmeade)", "USF (Diagon Alley)"],
       spellLocations: "Look for bronze medallions embedded in the ground near shop windows — the wand box includes a map",
-      who: "Family decision — Jasper and Sterling are the primary users"
+      who: "Jasper and Sterling — buying in-park Friday at Cosme Acajor's."
     },
     powerUpBands: {
       price: "~$45 each",
       who: "Jasper and Sterling (2 bands = ~$90)",
-      warnings: [
-        "⚠️ Purchase online at shopuniversal.com before the trip",
-        "⚠️ Set up Universal app accounts at home before departure — avoids in-park Wi-Fi friction",
-        "Link bands to Universal app accounts before arriving"
-      ],
+      status: "✅ Purchased — awaiting delivery",
+      purchasedAt: "shopuniversal.com",
+      notes: ["Universal app accounts set up at home ✅", "Link bands to app accounts on arrival"],
       usedFor: "Coin-collecting and interactive play throughout Super Nintendo World at Epic Universe"
     },
+    wandHolsters: {
+      status: "✅ Purchased & received",
+      source: "Etsy",
+      who: "Jasper and Sterling",
+      purpose: "Protects interactive glass tip from scratches. Clips to bag strap or belt.",
+      notes: "Scratches on the tip can affect spell spot performance."
+    },
+    myUniversalPhotos: {
+      status: "✅ Purchased",
+      package: "3-Day",
+      price: "$109.99 (online rate)",
+      coverage: "Entire family group under one package",
+      activation: "Activate at photo shop near park entrance on Friday 5/22 before entering",
+      validity: "Once activated, covers all 3 park days",
+      includes: ["Ride photos", "Roaming photographer shots", "Character meet-and-greets"]
+    },
+    bags: {
+      model: "North Face Berkeley Field Bag (sling, 5L) — one per person",
+      lockerStrategy: "Designated non-rider holds all four bags at coasters — eliminates paid lockers entirely",
+      fits: "IOA/USF ride lockers (14\"W × 5.5\"H × 16.9\"D) and Epic Universe lockers (11.8\"H × 11\"W × 13\"D)"
+    },
+    waterBottles: {
+      type: "Collapsible — one per person",
+      strategy: "Fill at park water fountains throughout the day with powdered drink additives. Freestyle machines used incidentally during quick-service meals only."
+    },
     costTable: [
-      { item: "Parking (Epic Universe, Fri)", est: "~$30/day", low: 30, high: 30, notes: "IOA/USF parking covered by Hard Rock stay" },
-      { item: "Lockers (if needed)", est: "$10–20/day", low: 0, high: 20, notes: "Belt bag hack avoids most of this" },
-      { item: "Wands (2 at ~$85)", est: "~$170", low: 170, high: 170, notes: "Buy Friday at Epic's Ministry of Magic" },
-      { item: "Power-Up Bands (×2)", est: "~$90", low: 90, high: 90, notes: "For Jasper + Sterling; buy online before trip" },
-      { item: "Grocery run (Thu)", est: "~$150–200", low: 150, high: 200, notes: "Covers full stay — breakfasts, lunches, Monday" },
-      { item: "Merchandise / souvenirs", est: "Budget separately", low: 0, high: 0, notes: "1 big + 1 small per kid recommended" },
-      { item: "In-park photos", est: "Variable", low: 0, high: 0, notes: "MyUniversalPhotos pass = unlimited option" },
-      { item: "Ponchos (×4)", est: "~$5–10 each at home", low: 20, high: 40, notes: "Buy before leaving NYC — in-park is ~$15 each" }
+      { item: "Parking (Epic Universe, Fri)",    est: "~$30",      low: 30,  high: 30,  notes: "IOA/USF parking covered by Hard Rock stay" },
+      { item: "Wands (2, Gen 2 interactive)",    est: "~$170",     low: 170, high: 170, notes: "✅ Planned — buying in-park Fri at Cosme Acajor's" },
+      { item: "Power-Up Bands (×2)",             est: "~$90",      low: 90,  high: 90,  notes: "✅ Purchased at shopuniversal.com — awaiting delivery" },
+      { item: "My Universal Photos (3-day)",     est: "$110",      low: 110, high: 110, notes: "✅ Purchased online at $109.99 — activate Fri 5/22" },
+      { item: "Grocery run (Thu)",               est: "~$150–175", low: 150, high: 175, notes: "Covers full stay — breakfasts, lunches, Monday" },
+      { item: "In-park snacks (3 days)",         est: "~$240",     low: 200, high: 240, notes: "Butterbeer, snack stops, treats across 3 days" },
+      { item: "Atlantic dinner (Fri, tax+tip)",  est: "~$160",     low: 140, high: 180, notes: "Reservation 7pm ✅" },
+      { item: "Mythos dinner (Sat, tax+tip)",    est: "~$160",     low: 140, high: 180, notes: "Reservation 4:15pm ✅" },
+      { item: "CityWalk dinner (Sun, tax+tip)",  est: "~$120",     low: 100, high: 140, notes: "Cowfish or Antojitos — no reservation needed" },
+      { item: "Ponchos (×4)",                    est: "~$5–10 ea", low: 20,  high: 40,  notes: "Buy before leaving — in-park is ~$15 each" },
+      { item: "Souvenirs / misc",                est: "~$150–200", low: 150, high: 200, notes: "1 big + 1 small per kid recommended" }
     ],
     beltBagHack: "A small belt bag / fanny pack worn on the front slides under lap bars and between shoulder harnesses on most rides — accepted on most attractions, avoids locker fees entirely. One per adult recommended.",
     souvenirStrategy: "Set expectations before entering any park: each kid gets one big item (wand is already planned) and one smaller souvenir. Prevents the 'can I get this?' loop at every shop.",
@@ -506,20 +558,25 @@ window.TRIP_DATA = {
     todo: [
       { id: "ai-2", text: "Call Hard Rock Hotel — confirm early room key / Express Pass issuance on Saturday morning bag drop (before room is ready)" },
       { id: "ai-3", text: "Measure Sterling's height — confirm he clears Incredible Hulk (54\" minimum, he is exactly at minimum). Wear thick-soled sneakers on IOA day." },
-      { id: "ai-4", text: "Purchase Power-Up Bands for Jasper and Sterling at shopuniversal.com (~$45 each)" },
-      { id: "ai-5", text: "Download Universal app and set up accounts for the family at home (not in-park)" },
       { id: "ai-6", text: "Confirm JetBlue terminal at MCO — MCO has two separate terminals, confirm before driving in on Monday" },
-      { id: "ai-7", text: "Buy ponchos before leaving NYC (cheaper than in-park)" },
-      { id: "ai-8", text: "Plan grocery list for Publix/Walmart run Thursday night (covers all timeshare breakfasts, lunches, and Monday)" }
+      { id: "ai-7", text: "Buy ponchos before leaving (cheaper than in-park)" },
+      { id: "ai-8", text: "Stock timeshare groceries — Publix or Walmart on the way from MCO Thursday night" }
     ],
     done: [
-      { id: "ad-1", text: "Book Mythos restaurant ✅ Sat 5/23 at 4:15pm · Booking #639120237617647104" },
-      { id: "ad-2", text: "Book Atlantic restaurant ✅ Fri 5/22 at 7:00pm · Booking #639120252710358272" },
-      { id: "ad-3", text: "Book Hard Rock Hotel ✅ OI-7A8VR8F7T6 · Sat 5/23–Sun 5/24" },
-      { id: "ad-4", text: "Book JetBlue flights ✅ KNREIZ · HPN↔MCO" },
-      { id: "ad-5", text: "Book Budget car rental ✅ 37111644US3" },
-      { id: "ad-6", text: "Book Hilton Grand Vacations timeshare ✅ RCI 559466785" },
-      { id: "ad-7", text: "Confirmed: Epic Universe tickets loaded in Universal app. No Express Pass at Epic Universe — Hard Rock Express Pass covers IOA + USF only (Sat/Sun)." }
+      { id: "ad-1",  text: "Book Mythos restaurant ✅ Sat 5/23 at 4:15pm · Booking #639120237617647104" },
+      { id: "ad-2",  text: "Book Atlantic restaurant ✅ Fri 5/22 at 7:00pm · Booking #639120252710358272" },
+      { id: "ad-3",  text: "Book Hard Rock Hotel ✅ OI-7A8VR8F7T6 · Sat 5/23–Sun 5/24" },
+      { id: "ad-4",  text: "Book JetBlue flights ✅ KNREIZ · HPN↔MCO" },
+      { id: "ad-5",  text: "Book Budget car rental ✅ 37111644US3" },
+      { id: "ad-6",  text: "Book Hilton Grand Vacations timeshare ✅ RCI 559466785" },
+      { id: "ad-7",  text: "Confirmed: Epic Universe tickets loaded in Universal app. No Express Pass at Epic Universe — Hard Rock Express Pass covers IOA + USF only (Sat/Sun)." },
+      { id: "ad-8",  text: "Purchase Power-Up Bands ✅ Ordered at shopuniversal.com · awaiting delivery" },
+      { id: "ad-9",  text: "Download Universal app and set up accounts ✅" },
+      { id: "ad-10", text: "Purchase My Universal Photos package ✅ 3-day · $109.99 · activate Fri 5/22" },
+      { id: "ad-11", text: "Purchase interactive wands ✅ Gen 2 · buying in-park Fri 5/22 at Cosme Acajor's" },
+      { id: "ad-12", text: "Purchase wand holsters ✅ Ordered on Etsy · received" },
+      { id: "ad-13", text: "Order trip t-shirts ✅ Performance fabric · HP house colors · one per person" },
+      { id: "ad-14", text: "Book Star Wars: The Mandalorian & Grogu ✅ Sat 5/23 at 12:10pm · #10172333652488" }
     ]
   },
 
