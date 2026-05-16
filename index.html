@@ -876,12 +876,12 @@ function renderHome() {
   document.getElementById('countdown-text').textContent = cd.text;
 
   document.getElementById('quick-links').innerHTML = [
-    ['bookings','flights','🎫','Bookings'],
-    ['info','heights','📏','Heights'],
-    ['bookings','dining','🍽️','Dining'],
     ['info','weather','🌧️','Weather'],
-    ['tips','tips','💡','Tips'],
-    ['tips','actions','✅','Checklist']
+    ['bookings','costs','💰','Costs'],
+    ['tips','notes','📝','Notes'],
+    ['tips','prep','📋','Prep'],
+    ['bookings','dining','🍽️','Dining'],
+    ['tips','tips','💡','Tips']
   ].map(([tab,sub,icon,label]) =>
     `<button class="quick-link-btn" onclick="showTab('${tab}');showSub('${tab}','${sub}')">
       <span class="ql-icon">${icon}</span>${label}</button>`
