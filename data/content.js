@@ -445,7 +445,8 @@ window.TRIP_DATA = {
       status: "✅ Purchased — awaiting delivery",
       purchasedAt: "shopuniversal.com",
       notes: ["Universal app accounts set up at home ✅", "Link bands to app accounts on arrival"],
-      usedFor: "Coin-collecting and interactive play throughout Super Nintendo World at Epic Universe"
+      usedFor: "Coin-collecting and interactive play throughout Super Nintendo World at Epic Universe",
+      warnings: []
     },
     wandHolsters: {
       status: "✅ Purchased & received",
