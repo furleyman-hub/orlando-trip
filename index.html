@@ -1772,8 +1772,10 @@ function renderPrepChecklist() {
     </div>
     ${items.length === 0
       ? '<div style="font-size:13px;color:var(--text2);padding:10px 0;">No items yet — add something above.</div>'
-      : `<ul class="checklist">
-          ${items.map(item => `
+      : (() => {
+          const todo = items.filter(i => !i.done);
+          const done = items.filter(i => i.done);
+          const renderItem = item => `
             <li class="${item.done ? 'done' : ''}" id="prep-li-${item.id}">
               <input type="checkbox" class="check-input" id="prep-cb-${item.id}"
                 ${item.done ? 'checked' : ''}
@@ -1781,8 +1783,11 @@ function renderPrepChecklist() {
               <label class="check-label" for="prep-cb-${item.id}" style="flex:1;">${esc(item.text)}</label>
               <button onclick="deletePrepItem('${item.id}')"
                 style="background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer;padding:0 4px;line-height:1;" title="Remove">✕</button>
-            </li>`).join('')}
-        </ul>`}`;
+            </li>`;
+          return `<ul class="checklist">${todo.map(renderItem).join('')}</ul>
+            ${done.length ? `<div style="font-size:11px;color:var(--text2);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.05em;">Done</div>
+            <ul class="checklist">${done.map(renderItem).join('')}</ul>` : ''}`;
+        })()}`;
 }
 
 async function savePrepToFirebase(items) {
