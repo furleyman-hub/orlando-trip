@@ -51,8 +51,9 @@ window.TRIP_DATA = {
           { time: "2:15pm", activity: "Uber leaves the house" },
           { time: "4:05pm", activity: "Depart HPN (JetBlue Flight 0495)" },
           { time: "6:59pm", activity: "Arrive MCO. Pick up Budget rental car (conf. 37111644US3)." },
-          { time: "Evening", activity: "Stop at Publix or Walmart en route — stock groceries for the full stay." },
-          { time: "~9pm", activity: "Check into Hilton Grand Vacations SeaWorld. Easy dinner nearby." },
+          { time: "~7:30pm", activity: "🍽️ Dinner at Rock & Brews Orlando — 6897 S Semoran Blvd · scratch-made American, craft beer, live music · open until 11pm" },
+          { time: "~8:45pm", activity: "Stop at Publix (Vineland Ave) — stock groceries for the full stay" },
+          { time: "~9:30pm", activity: "Check into Hilton Grand Vacations SeaWorld" },
           { time: "9:30–10pm", activity: "Lights out. Tomorrow is a full day." }
         ],
         mustDos: [],
@@ -62,8 +63,9 @@ window.TRIP_DATA = {
           { time: "2:15pm", timeMin: 855,  emoji: "🚗", category: "travel",    title: "Uber to airport",         detail: "Leave from home → HPN" },
           { time: "4:05pm", timeMin: 965,  emoji: "✈️", category: "travel",    title: "Depart HPN",              detail: "JetBlue 0495 · Row 20 · HPN → MCO" },
           { time: "6:59pm", timeMin: 1139, emoji: "🛬", category: "travel",    title: "Arrive MCO",              detail: "Pick up Budget rental car" },
-          { time: "~8:00pm",timeMin: 1200, emoji: "🛒", category: "logistics", title: "Grocery run",             detail: "Publix or Walmart en route to timeshare" },
-          { time: "~9:00pm",timeMin: 1260, emoji: "🏨", category: "hotel",     title: "Check in — Hilton SeaWorld", detail: "Timeshare · Thu–Tue stay" }
+          { time: "~7:30pm",timeMin: 1170, emoji: "🍽️", category: "meal",      title: "Rock & Brews Orlando",      detail: "6897 S Semoran Blvd · American food + live music" },
+          { time: "~8:45pm",timeMin: 1245, emoji: "🛒", category: "logistics", title: "Grocery run",             detail: "Publix (Vineland Ave) — stock for full stay" },
+          { time: "~9:30pm",timeMin: 1290, emoji: "🏨", category: "hotel",     title: "Check in — Hilton SeaWorld", detail: "Timeshare · Thu–Tue stay" }
         ]
       },
       {
@@ -155,19 +157,19 @@ window.TRIP_DATA = {
           { time: "12:00pm", activity: "Leave USF. Walk to CityWalk. Lunch + rest." },
           { time: "2:30pm", activity: "Return to USF — Hogwarts Express USF→IOA then back (both directions — different stories each way)" },
           { time: "4:30pm", activity: "Simpsons Ride + re-rides" },
-          { time: "5:30pm", activity: "Dinner at Leaky Cauldron (Diagon Alley) — or Jasper's pick: Cowfish or Antojitos at CityWalk" },
+          { time: "5:30pm", activity: "🍽️ Dinner at CityWalk — Cowfish or Antojitos (Jasper's pick, no reservation needed)" },
           { time: "8:30pm", activity: "Collect bags from Hard Rock bell desk. Drive back to Hilton SeaWorld timeshare." }
         ],
         mustDos: ["Gringotts (EPA, rope drop)", "Hogwarts Express (both directions)", "Revenge of the Mummy"],
         niceToDos: ["Villain-Con Minion Blast", "Transformers", "Simpsons Ride", "Diagon Alley wand spells"],
-        dining: { name: "Leaky Cauldron or Jasper's pick (Cowfish / Antojitos)", time: "~5:30pm", location: "Diagon Alley or CityWalk", confirmed: false },
+        dining: { name: "Cowfish or Antojitos (Jasper's pick)", time: "~5:30pm", location: "CityWalk", confirmed: false },
         anchorEvents: [
           { time: "7:30am", timeMin: 450,  emoji: "🍳", category: "logistics", title: "Breakfast",               detail: "Hard Rock Hotel" },
           { time: "8:00am", timeMin: 480,  emoji: "🏨", category: "hotel",     title: "Check out Hard Rock",     detail: "Bags with bell desk · Express Pass stays active" },
           { time: "8:15am", timeMin: 495,  emoji: "🎬", category: "park",      title: "Rope Drop — USF",         detail: "Gringotts first (Diagon Alley) · EPA" },
           { time: "12:00pm",timeMin: 720,  emoji: "🍔", category: "break",     title: "Midday — CityWalk",       detail: "Lunch + rest · leave park" },
           { time: "2:30pm", timeMin: 870,  emoji: "🎬", category: "park",      title: "Return to USF",           detail: "Hogwarts Express · both directions" },
-          { time: "~5:30pm",timeMin: 1050, emoji: "🍽️", category: "meal",      title: "Dinner — CityWalk",       detail: "Cowfish or Antojitos · decide before trip" },
+          { time: "~5:30pm",timeMin: 1050, emoji: "🍽️", category: "meal",      title: "Dinner — CityWalk",       detail: "Cowfish or Antojitos · Jasper's pick" },
           { time: "8:30pm", timeMin: 1230, emoji: "🚗", category: "logistics", title: "Drive to timeshare",      detail: "Collect bags from Hard Rock bell desk first" }
         ]
       },
@@ -296,8 +298,9 @@ window.TRIP_DATA = {
       { name: "Mythos", date: "Saturday 5/23", time: "4:15pm", location: "Islands of Adventure", status: "✅ Confirmed", bookingId: "#639120237617647104" }
     ],
     planned: [
-      { name: "Cowfish or Antojitos (decide before trip)", date: "Sunday 5/24", time: "~5:30pm", location: "CityWalk", note: "No reservation needed — arrive by 5:30pm on Memorial Day weekend. Cowfish: sushi burgers, fun for kids. Antojitos: Mexican, livelier atmosphere." },
-      { name: "Timeshare / grocery meals", date: "Thu–Mon", time: "All breakfasts + midday lunches", location: "Timeshare", note: "Stock at Publix or Walmart Thursday on the way from MCO. Budget ~$150–175." }
+      { name: "Rock & Brews Orlando", date: "Thursday 5/21", time: "~7:30pm", location: "6897 S Semoran Blvd, Orlando", note: "Scratch-made American food, craft beer, live music. Family-friendly, open until 11pm. Stop here after MCO pickup, before Publix run." },
+      { name: "Cowfish or Antojitos (Jasper's pick)", date: "Sunday 5/24", time: "~5:30pm", location: "CityWalk", note: "No reservation needed — arrive by 5:30pm on Memorial Day weekend. Cowfish: sushi burgers, fun for kids. Antojitos: Mexican, livelier atmosphere." },
+      { name: "Timeshare / grocery meals", date: "Thu–Mon", time: "All breakfasts + midday lunches", location: "Timeshare", note: "Stock at Publix (Vineland Ave) Thursday on the way from MCO. Budget ~$150–175." }
     ],
     snacks: [
       { park: "Epic Universe (Fri)", items: ["Butterbeer Crêpe — Ministry of Magic, exclusive to Epic", "DK Crush Float — Donkey Kong Country, Nintendo World", "Yoshi's Smoothie — Nintendo World", "Yaknog — Mead Hall, Isle of Berk"] },
