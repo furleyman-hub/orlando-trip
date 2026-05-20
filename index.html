@@ -1673,6 +1673,23 @@ function renderNotes() {
     </div>`;
 }
 
+const NOTES_URL = () => (TRIP_DATA.firebaseUrl || '') + '/notes.json';
+
+async function fetchNotes() {
+  if (!TRIP_DATA.firebaseUrl) return;
+  try {
+    const res = await fetch(NOTES_URL());
+    const data = await res.json();
+    if (data !== null) {
+      localStorage.setItem('ot-notes', data);
+      const el = document.getElementById('notes-area');
+      if (el) el.value = data;
+      const countEl = document.getElementById('notes-count');
+      if (countEl) countEl.textContent = data.trim().length > 0 ? data.trim().length + ' characters' : 'Empty';
+    }
+  } catch(e) { /* offline */ }
+}
+
 let _notesSaveTimer;
 function saveNotes() {
   clearTimeout(_notesSaveTimer);
@@ -1681,16 +1698,42 @@ function saveNotes() {
     localStorage.setItem('ot-notes', val);
     const el = document.getElementById('notes-count');
     if (el) el.textContent = val.trim().length > 0 ? val.trim().length + ' characters' : 'Empty';
+    if (TRIP_DATA.firebaseUrl) {
+      fetch(NOTES_URL(), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(val) }).catch(() => {});
+    }
   }, 400);
 }
 
 function clearNotes() {
   if (!confirm('Clear all notes?')) return;
   localStorage.removeItem('ot-notes');
+  if (TRIP_DATA.firebaseUrl) {
+    fetch(NOTES_URL(), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify('') }).catch(() => {});
+  }
   renderNotes();
 }
 
 // ── EXPENSE TRACKER ───────────────────────────────────────
+const EXP_KEY = 'ot-expenses';
+const EXP_URL = () => (TRIP_DATA.firebaseUrl || '') + '/expenses.json';
+
+async function fetchExpenses() {
+  if (!TRIP_DATA.firebaseUrl) return;
+  try {
+    const res = await fetch(EXP_URL());
+    const data = await res.json();
+    if (data !== null) {
+      localStorage.setItem(EXP_KEY, JSON.stringify(data));
+      renderExpenses();
+    }
+  } catch(e) { /* offline */ }
+}
+
+async function saveExpensesToFirebase(items) {
+  if (!TRIP_DATA.firebaseUrl) return;
+  fetch(EXP_URL(), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(items) }).catch(() => {});
+}
+
 function renderExpenses() {
   const list = document.getElementById('expense-list');
   if (!list) return;
@@ -1723,15 +1766,17 @@ function addExpense() {
   if (!desc || isNaN(amount) || amount <= 0) { showToast('Enter a description and amount'); return; }
   const expenses = JSON.parse(localStorage.getItem('ot-expenses') || '[]');
   expenses.push({ id: String(Date.now()), desc, amount });
-  localStorage.setItem('ot-expenses', JSON.stringify(expenses));
+  localStorage.setItem(EXP_KEY, JSON.stringify(expenses));
+  saveExpensesToFirebase(expenses);
   descEl.value = '';
   amtEl.value = '';
   renderExpenses();
 }
 
 function deleteExpense(id) {
-  const expenses = JSON.parse(localStorage.getItem('ot-expenses') || '[]');
-  localStorage.setItem('ot-expenses', JSON.stringify(expenses.filter(e => e.id !== id)));
+  const expenses = JSON.parse(localStorage.getItem(EXP_KEY) || '[]').filter(e => e.id !== id);
+  localStorage.setItem(EXP_KEY, JSON.stringify(expenses));
+  saveExpensesToFirebase(expenses);
   renderExpenses();
 }
 
@@ -1982,8 +2027,10 @@ function init() {
       .catch(() => {});
   }
 
-  // Fetch prep checklist from Firebase (async, updates UI when ready)
+  // Fetch shared data from Firebase (async, updates UI when ready)
   fetchPrepChecklist();
+  fetchExpenses();
+  fetchNotes();
 
   // Fetch live weather forecast (async, updates UI when ready)
   fetchWeather();
