@@ -799,11 +799,16 @@ function copyText(text) {
   navigator.clipboard.writeText(text).then(() => showToast('Copied: ' + text));
 }
 
+// Parse a YYYY-MM-DD string as LOCAL midnight (avoids UTC-offset issues)
+function localDate(str) {
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 function getDaysUntilTrip() {
-  const now = new Date();
-  const start = new Date(TRIP_DATA.meta.startDate);
-  const end = new Date(TRIP_DATA.meta.endDate);
-  now.setHours(0,0,0,0); start.setHours(0,0,0,0); end.setHours(0,0,0,0);
+  const now = new Date(); now.setHours(0,0,0,0);
+  const start = localDate(TRIP_DATA.meta.startDate);
+  const end   = localDate(TRIP_DATA.meta.endDate);
   const diff = Math.round((start - now) / 86400000);
   if (diff > 0) return { text: diff + ' day' + (diff === 1 ? '' : 's') + ' to go!', type: 'before' };
   if (diff === 0) return { text: 'Trip starts TODAY! 🎉', type: 'today' };
@@ -814,10 +819,7 @@ function getDaysUntilTrip() {
 
 function getCurrentDay() {
   const now = new Date(); now.setHours(0,0,0,0);
-  return TRIP_DATA.itinerary.days.find(d => {
-    const dd = new Date(d.date); dd.setHours(0,0,0,0);
-    return dd.getTime() === now.getTime();
-  });
+  return TRIP_DATA.itinerary.days.find(d => localDate(d.date).getTime() === now.getTime());
 }
 
 function parseScheduleTime(str) {
